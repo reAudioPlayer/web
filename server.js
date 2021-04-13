@@ -14,10 +14,10 @@ var io = require('socket.io')(server, {
 
 // Mit diesem Kommando starten wir den Webserver.
 var port = process.env.PORT || 3000;
-app.use(require('express-basic-auth')({
+/*app.use(require('express-basic-auth')({
   users: { 'admin': 'password' }, // vergib hier deine gewünschten Benutzernamen und Passwörter
   challenge: true
-}));
+}));*/
 server.listen(port, function () {
   // Wir geben einen Hinweis aus, dass der Webserer läuft.
   console.log('Webserver running on Port %d', port);
