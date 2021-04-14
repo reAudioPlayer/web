@@ -1,10 +1,9 @@
-// express und http Module importieren. Sie sind dazu da, die HTML-Dateien
-// aus dem Ordner "public" zu veröffentlichen.
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const db = require('./models/index.js');
+app.use(express.urlencoded({ extended: true }))
 
-// Mit dieser zusätzlichen Zeile bringen wir Socket.io in unseren Server.
 var io = require('socket.io')(server, {
   cors: {
     origin: "*",
@@ -12,83 +11,122 @@ var io = require('socket.io')(server, {
   }
 });
 
-// Mit diesem Kommando starten wir den Webserver.
 var port = process.env.PORT || 3000;
 /*app.use(require('express-basic-auth')({
   users: { 'admin': 'password' }, // vergib hier deine gewünschten Benutzernamen und Passwörter
   challenge: true
 }));*/
 server.listen(port, function () {
-  // Wir geben einen Hinweis aus, dass der Webserer läuft.
   console.log('Webserver running on Port %d', port);
 });
 
-// Hier teilen wir express mit, dass die öffentlichen HTML-Dateien
-// im Ordner "public" zu finden sind.
+
 app.use(express.static(__dirname + '/public'));
 
-// === Ab hier folgt der Code für den Chat-Server
+function findUserByKey(socket, key)
+{
+  /*if (key.length != 6)
+  {
+    return;
+  }*/
 
-// Hier sagen wir Socket.io, dass wir informiert werden wollen,
-// wenn sich etwas bei den Verbindungen ("connections") zu 
-// den Browsern tut. 
+  console.log(key);
+  db.GameLib.findAll({where: { key: key.toUpperCase() }, limit: 1})
+  .then(entries => {
+    console.log(entries.length + " entries")
+    if(entries.length > 0)
+    {
+      socket.emit('game library of', entries[0].dataValues.lib);
+    }
+  });
+}
+
+function authoriseUser(json)
+{
+  updateKeyLib(json.key, json.value);
+}
+
+function writeKeyLib(key, lib)
+{
+  db.GameLib.findOrCreate({where: {key: key}, defaults: {lib: lib}});
+}
+
+function updateKeyLib(key, lib)
+{
+  db.GameLib.update({lib: lib}, {where: {key: key}});
+}
+
+function synchroniseGameDatabase(socket, dbProposed)
+{
+  db.GameLib.findAll({where: { key: "MASTER" }, limit: 1})
+  .then(entries => {
+    console.log(entries.length + " entries")
+    if(entries.length > 0)
+    {
+      const mstr = JSON.parse(entries[0].dataValues.lib);
+
+      const filtered = Object.values({...mstr, ...JSON.parse(dbProposed)});
+      //var merged = mstr.concat(JSON.parse(dbProposed));
+      //var filtered = merged.filter((item, pos) => merged.indexOf(item) === pos);
+
+      updateKeyLib("MASTER", JSON.stringify(filtered));
+
+      socket.emit('synchronised game database', filtered);
+    }
+  });
+}
+
+/* socket part */
 io.on('connection', function (socket) {
-  // Die variable "socket" repräsentiert die aktuelle Web Sockets
-  // Verbindung zu jeweiligen Browser client.
+  var addedUser = false; // has logged in
 
-  // Kennzeichen, ob der Benutzer sich angemeldet hat
-  var addedUser = false;
+  // on attempted login
+  socket.on('authorise', function (msg) {
+    const json = JSON.parse(msg);
+    authoriseUser(json);
 
-  // Funktion, die darauf reagiert, wenn sich der Benutzer anmeldet
-  socket.on('add user', function (username) {
-    // Benutzername wird in der aktuellen Socket-Verbindung gespeichert
-    socket.username = username;
+    socket.username = json.key;
     addedUser = true;
 
-    // Dem Client wird die "login"-Nachricht geschickt, damit er weiß,
-    // dass er erfolgreich angemeldet wurde.
-    socket.emit('login');
-    console.log(socket.username + ": logged in");
+    socket.emit('authorised');
+    console.log(socket.username + ": authorised");
 
-    // Alle Clients informieren, dass ein neuer Benutzer da ist.
-    socket.broadcast.emit('user joined', socket.username);
+    // notify others
+    socket.broadcast.emit('user authorised', socket.username);
+  });
+
+  socket.on('get game library of', function(key) {
+    socket.broadcast.emit('new message', key);
+    findUserByKey(socket, key)
+  });
+
+  socket.on('synchronise game database', function(db) {
+    socket.broadcast.emit('new message', db);
+    synchroniseGameDatabase(socket, db)
   });
 
   socket.on('verify root', function (password) {
     if (password != "pAsSwOrD")
     {
+      socket.emit('declined');
       return;
     }
-
-    // Benutzername wird in der aktuellen Socket-Verbindung gespeichert
     socket.username = "root";
     addedUser = true;
-
-    // Dem Client wird die "login"-Nachricht geschickt, damit er weiß,
-    // dass er erfolgreich angemeldet wurde.
-    socket.emit('login');
-    console.log(socket.username + ": logged in");
-
-    // Alle Clients informieren, dass ein neuer Benutzer da ist.
-    socket.broadcast.emit('user joined', socket.username);
+    socket.emit('accepted');
   });
 
-  // Funktion, die darauf reagiert, wenn ein Benutzer eine Nachricht schickt
-  socket.on('new message', function (data) {
+  socket.on('launch game', function (gameId) {
     // Sende die Nachricht an alle Clients
-    console.log(socket.username + ": " + data)
-    socket.broadcast.emit('new message', {
-      username: socket.username,
-      message: data
+    console.log(socket.username + ": " + gameId)
+    socket.broadcast.emit('game invite', {
+      inviter: socket.username,
+      gameId: gameId
     });
   });
 
-  // Funktion, die darauf reagiert, wenn sich ein Benutzer abmeldet.
-  // Benutzer müssen sich nicht explizit abmelden. "disconnect"
-  // tritt auch auf wenn der Benutzer den Client einfach schließt.
   socket.on('disconnect', function () {
     if (addedUser) {
-      // Alle über den Abgang des Benutzers informieren
       socket.broadcast.emit('user left', socket.username);
     }
   });

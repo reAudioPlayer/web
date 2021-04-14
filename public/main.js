@@ -93,7 +93,7 @@ $(function () {
   // ==== Code für Socket.io Events
 
   // Server schickt "login": Anmeldung war erfolgreich
-  socket.on('login', function (data) {
+  socket.on('accepted', function (data) {
     connected = true;
     document.getElementById("logTitle").innerHTML = "Root Log";
     log("Authorised, commencing logging..");
