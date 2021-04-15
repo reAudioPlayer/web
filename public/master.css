@@ -1,0 +1,126 @@
+:root {
+    --gradient: linear-gradient(to left bottom,
+            hsl(214, 80%, 24%),
+            #522783);
+
+    --glass-gradient: linear-gradient(to right bottom,
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.3));
+
+    --border: 1px solid rgba(255, 255, 255, .5);
+}
+
+html,
+body {
+    min-height: 100vh;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: var(--gradient);
+    margin: 0;
+}
+
+.wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+
+header {
+    border-bottom: var(--border);
+    width: 90vw;
+    flex: .5;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.main {
+    width: 90vw;
+    flex: 40;
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+footer {
+    border-top: var(--border);
+    width: 90vw;
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+h1 {
+    color: white;
+    font-size: 5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    width: 80vw;
+    background: var(--glass-gradient);
+    margin: 2%;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    flex-flow: row;
+    align-items: center;
+}
+
+.content-column {
+    flex: 1;
+    height: 90%;
+    padding-left: 5%;
+}
+
+#biglinks {
+    border-left: var(--border);
+}
+
+footer>p {
+    font-size: 10px;
+}
+
+a {
+    color: white;
+}
+
+@media screen and (max-width: 970px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    .form__label {
+        font-size: 0.2rem;
+    }
+
+    .content-column {
+        justify-content: flex-start !important;
+        flex: 1 !important;
+        width: 80%;
+    }
+
+    .main {
+        align-items: stretch;
+    }
+
+    .content {
+        justify-content: flex-start !important;
+        display: flex !important;
+        flex-flow: column wrap !important;
+    }
+
+    #biglinks {
+        border-left: 0;
+        border-top: var(--border);
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+}

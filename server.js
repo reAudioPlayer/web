@@ -12,10 +12,7 @@ var io = require('socket.io')(server, {
 });
 
 var port = process.env.PORT || 3000;
-/*app.use(require('express-basic-auth')({
-  users: { 'admin': 'password' }, // vergib hier deine gewünschten Benutzernamen und Passwörter
-  challenge: true
-}));*/
+
 server.listen(port, function () {
   console.log('Webserver running on Port %d', port);
 });
@@ -25,18 +22,16 @@ app.use(express.static(__dirname + '/public'));
 
 function findUserByKey(socket, key)
 {
-  /*if (key.length != 6)
-  {
-    return;
-  }*/
-
-  console.log(key);
   db.GameLib.findAll({where: { key: key.toUpperCase() }, limit: 1})
   .then(entries => {
     console.log(entries.length + " entries")
     if(entries.length > 0)
     {
-      socket.emit('game library of', entries[0].dataValues.lib);
+      socket.emit('game library of', JSON.parse(entries[0].dataValues.lib));
+    }
+    else
+    {
+      socket.emit('game library of', "null");
     }
   });
 }
@@ -53,7 +48,17 @@ function writeKeyLib(key, lib)
 
 function updateKeyLib(key, lib)
 {
-  db.GameLib.update({lib: lib}, {where: {key: key}});
+  db.GameLib.findAll({where: { key: key.toUpperCase() }, limit: 1})
+  .then(entries => {
+    if (entries.length > 0)
+    {
+      db.GameLib.update({lib: lib}, {where: {key: key}});
+    }
+    else
+    {
+      writeKeyLib(key, lib);
+    }
+  });
 }
 
 function synchroniseGameDatabase(socket, dbProposed)
@@ -65,7 +70,7 @@ function synchroniseGameDatabase(socket, dbProposed)
     {
       const mstr = JSON.parse(entries[0].dataValues.lib);
 
-      const filtered = Object.values({...mstr, ...JSON.parse(dbProposed)});
+      const filtered = Object.values({...mstr, ...dbProposed});
       //var merged = mstr.concat(JSON.parse(dbProposed));
       //var filtered = merged.filter((item, pos) => merged.indexOf(item) === pos);
 
@@ -82,7 +87,8 @@ io.on('connection', function (socket) {
 
   // on attempted login
   socket.on('authorise', function (msg) {
-    const json = JSON.parse(msg);
+    //const json = JSON.parse(msg);
+    const json = msg;
     authoriseUser(json);
 
     socket.username = json.key;
@@ -92,16 +98,18 @@ io.on('connection', function (socket) {
     console.log(socket.username + ": authorised");
 
     // notify others
-    socket.broadcast.emit('user authorised', socket.username);
+    socket.broadcast.emit('msc/authorised', socket.username);
   });
 
   socket.on('get game library of', function(key) {
-    socket.broadcast.emit('new message', key);
+    socket.broadcast.emit('msg/get game library of', {
+      username: socket.username, key: key
+    });
     findUserByKey(socket, key)
   });
 
   socket.on('synchronise game database', function(db) {
-    socket.broadcast.emit('new message', db);
+    socket.broadcast.emit('msg/synchronise game database', socket.username);
     synchroniseGameDatabase(socket, db)
   });
 
@@ -116,18 +124,18 @@ io.on('connection', function (socket) {
     socket.emit('accepted');
   });
 
-  socket.on('launch game', function (gameId) {
-    // Sende die Nachricht an alle Clients
-    console.log(socket.username + ": " + gameId)
-    socket.broadcast.emit('game invite', {
+  socket.on('launch game', function (game) {
+    const msg = {
       inviter: socket.username,
-      gameId: gameId
-    });
+      receiver: game.receiver,
+      gameId: game.id
+    };
+    socket.broadcast.emit('game invite', msg);
   });
 
   socket.on('disconnect', function () {
     if (addedUser) {
-      socket.broadcast.emit('user left', socket.username);
+      socket.broadcast.emit('msg/disconnect', socket.username);
     }
   });
 });
