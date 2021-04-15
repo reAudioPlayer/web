@@ -4,6 +4,8 @@ const server = require('http').createServer(app);
 const db = require('./models/index.js');
 app.use(express.urlencoded({ extended: true }))
 
+console.log(process.env.DATABASE_URL);
+
 var io = require('socket.io')(server, {
   cors: {
     origin: "*",
