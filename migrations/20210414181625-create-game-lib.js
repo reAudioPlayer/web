@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       lib: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(20000)
       },
       createdAt: {
         allowNull: false,
