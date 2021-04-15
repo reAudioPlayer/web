@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('GameLibs', {
+    await queryInterface.changeTable('GameLibs', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       lib: {
-        type: Sequelize.STRING(20000)
+        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,
