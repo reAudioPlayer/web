@@ -1,14 +1,32 @@
 <html>
-    Fantastic GUI
+
+<body>
+    <p id="loginState">Login State Unknown</p>
+    <br>
+    <button id="loginout" onclick="window.open('/login')">Log In</button>
+    <br>
     <button onclick="link()">Link To Local</button>
+</body>
+
 </html>
 
 <script>
-    async function link()
-    {
+    async function link() {
         const resp = await fetch("/user/get");
         const json = await resp.json();
         const data = json.data;
-        window.location.href = "http://localhost:8080/api/link&redirect=" + encodeURIComponent(window.location.href) + "&data=" + JSON.stringify(data);
+        window.location.href = "http://localhost:8080/api/link&redirect=" + encodeURIComponent(window.location
+            .href) + "&data=" + JSON.stringify(data);
     }
+
+    fetch("/user/get")
+        .then(x => {
+            if (x.status == 401) {
+                document.getElementById("loginState").innerHTML = "Logged Out"
+                document.getElementById("loginout").innerHTML = "Log Out"
+                document.getElementById("loginout").onclick = x => window.open('/logout')
+            } else {
+                document.getElementById("loginState").innerHTML = "Logged In"
+            }
+        })
 </script>
