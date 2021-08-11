@@ -54,6 +54,13 @@ server.listen(port, function () {
 
 // ROUTES
 
+app.get("/test", (req, res) => {
+    res.json({
+        BASE: process.env.BASE_URL,
+        ID: process.env.AUTH0_CLIENT_ID
+    })
+})
+
 app.get('/user/get', async (req, res) => {
     if(req.oidc.user)
     {
