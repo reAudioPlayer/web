@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
+    "express-openid-connect": "^2.5.0",
     "node-url-shortener": "^1.1.11",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",

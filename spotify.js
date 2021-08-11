@@ -16,21 +16,21 @@ const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&re
 
 const code = "AQBin95QPP92XdP4ODfsWHsgmbPTc8KozpBKXIPS66b0YQOR7E4DVaDNmVwRRWH3g5mTiJsJ_9TYONtRuMxXuacK4-LvyIy6sZ7dba-js7FKkaOpyZnpaXJW_2X9pRPTbku9w8uUVA9TcjEEPKIEm8aeTRIqUlMmpL7seoHztTtxPs0lvC1QoBYXWt4fQBZ3rvpueeZ0aGFpOq8a4aN7WNRIHrizug"
 
-spotifyApi.setAccessToken("BQAotLmHfBkiL2sDReaCz77bv9C8PKO9wKVFZg9j41kwn9ZkRVQqZJ4_sdvccCXXtzqocsheD3s70TtSuWbn-cWk7-c1TQUf0HkrzV-05AHG3jS-62Q8-IiL_GZTlDnO_yAWKj9nRVsZnkZt3Va9hwKLYbd3sXbwI2pSdnDIGNOdx0SSzd5qu8GN")
+spotifyApi.setAccessToken("BQCSUfpGdySN55u-9xxSm621iyT0DXTxQ2GTjD8I3IXMDlrg7sv7dItfyiOPbHyxN1aDV6he6Uy37RtqWZ36xA9xEmOMMd48JO_MBUhltR5filzB9ZFPpxcPAQuPcz1utc0l93VcaWOSnjPVhL2MxJwiCkjq6f4pUZZC7lkLtXWii3DYj_nlqE1Z2g-TSVbsGrNRvA")
 
 spotifyApi.getFollowedArtists({ limit : 50 })
-  .then(function(data) {
-     return data.body.artists.items.map(x => x.id)
-  })
-  .then(artists => {
-    artists.forEach(artist => {
-        spotifyApi.getArtistAlbums(artist, { limit: 10 })
-          .then(function(data) {
-            const latestRelease = data.body.items.sort((a,b) => (a.release_date < b.release_date) ? 1 : ((b.release_date < a.release_date) ? -1 : 0))[0]
-            console.log(latestRelease.artists[0].name + " - " + latestRelease.name)
-            console.log(latestRelease)
-          }, function(err) {
-            console.log('Something went wrong!', err);
-          });   
-    })
-  });
+.then(function(data) {
+    return data.body.artists.items.map(x => x.id)
+})
+.then(artists => {
+artists.forEach(artist => {
+    spotifyApi.getArtistAlbums(artist, { limit: 10 })
+        .then(function(data) {
+        const latestRelease = data.body.items.sort((a,b) => (a.release_date < b.release_date) ? 1 : ((b.release_date < a.release_date) ? -1 : 0))[0]
+        console.log(latestRelease.artists[0].name + " - " + latestRelease.name)
+        console.log(latestRelease)
+        }, function(err) {
+        console.log('Something went wrong!', err);
+        });
+})
+});

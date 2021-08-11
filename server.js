@@ -1,30 +1,98 @@
+// spotify api
+const SpotifyWebApi = require('spotify-web-api-node');
+const spotifyApi = new SpotifyWebApi();
+
+// cors
+const cors = require("cors")
+
+// sequelize
+const db = require('./models/index.js');
+
+// openid
+const {
+    requiresAuth
+} = require('express-openid-connect');
+
 const express = require('express');
-
-var SpotifyWebApi = require('spotify-web-api-node');
-var spotifyApi = new SpotifyWebApi();
-
 const app = express();
 const server = require('http').createServer(app);
-const db = require('./models/index.js');
+
+const port = process.env.PORT || 3000;
+
+const {
+    auth
+} = require('express-openid-connect');
+
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: 'a long, randomly-generated string stored in env',
+    baseURL: 'http://localhost:3000',
+    clientID: process.env.AUTH0_CLIENT_ID, // hide!!!
+    issuerBaseURL: 'https://dev-l3q9y5qp.us.auth0.com'
+};
+
+db.sequelize.sync({})
+
+console.log(process.env.DATABASE_URL);
+
+// SERVER INIT
+
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
+
+app.use(cors())
+
 app.use(express.urlencoded({
     extended: true
 }))
 app.use(express.json())
 
-console.log(process.env.DATABASE_URL);
-
-var io = require('socket.io')(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-});
-
-var port = process.env.PORT || 3000;
-
 server.listen(port, function () {
     console.log('Webserver running on Port %d', port);
 });
+
+// ROUTES
+
+app.get('/user/get', async (req, res) => {
+    if(req.oidc.user)
+    {
+        const data = await getUserData(req.oidc.user.email, req.oidc.user.sub);
+        res.json({
+            user: req.oidc.user,
+            data
+        })
+    }
+    else
+    {
+        res.status(401).send(false)
+    }
+});
+
+app.post('/user/set/data', requiresAuth(), async function (req, res) {
+    setData(req, req.body.data)
+    res.send(req.body.data)
+})
+
+app.post('/user/set', requiresAuth(), async function (req, res) {
+    console.log(req)
+    console.log(req.body)
+    const data = {
+        youtubeApiKey: req.body.youtubeApiKey,
+        spotifyApiId: req.body.spotifyApiId,
+        spotifyApiSecret: req.body.spotifyApiSecret,
+        igdbApiId: req.body.igdbApiId,
+        igdbApiSecret: req.body.igdbApiSecret,
+    }
+
+    setData(req, JSON.stringify(data))
+
+    res.send(data)
+})
+
+app.get(["/spotify", "/spotify/", "/spotify/index.html"], requiresAuth(), function (req, res) {
+    res.sendFile(__dirname + '/public/spotify/index.html')
+})
 
 app.post('/spotify/releaseRadar', async function (req, res) {
     try {
@@ -62,6 +130,62 @@ app.get('/spotify/preview/album/:id', async function (req, res) {
 })
 
 app.use(express.static(__dirname + '/public'));
+
+// FUNCTIONS
+
+async function setData(req, data) {
+    const entry = await userExists(req.oidc.user.email, req.oidc.user.sub)
+
+    if (!entry) {
+        await db.UserDb.create({
+            username: req.oidc.user.email,
+            password: req.oidc.user.sub,
+            data: data
+        })
+        return;
+    } else {
+
+        await db.UserDb.update({
+            data: data
+        }, {
+            where: {
+                username: req.oidc.user.email,
+                password: req.oidc.user.sub
+            }
+        })
+    }
+}
+
+async function userExists(username, password) {
+    const entries = await db.UserDb.findAll({
+        where: {
+            username,
+            password
+        },
+        limit: 1
+    });
+
+    return entries[0]
+}
+
+async function getUserData(username, password) {
+    const entry = await userExists(username, password)
+    if (!entry) {
+        return 404;
+    }
+
+    if (entry.dataValues.password != password) {
+        res.status(401).send("Invalid Password")
+        return 401;
+    }
+
+    try {
+        const jdata = JSON.parse(entry.dataValues.data);
+        return jdata
+    } catch {
+        return data
+    }
+}
 
 function findUserByKey(socket, key) {
     db.GameLib.findAll({
@@ -144,6 +268,13 @@ function synchroniseGameDatabase(socket, dbProposed) {
 }
 
 /* socket part */
+const io = require('socket.io')(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
 io.on('connection', function (socket) {
     var addedUser = false; // has logged in
 

@@ -1,1 +1,14 @@
-<script>window.location.href="https://reap.ml"</script>
+<html>
+    Fantastic GUI
+    <button onclick="link()">Link To Local</button>
+</html>
+
+<script>
+    async function link()
+    {
+        const resp = await fetch("/user/get");
+        const json = await resp.json();
+        const data = json.data;
+        window.location.href = "http://localhost:8080/api/link&redirect=" + encodeURIComponent(window.location.href) + "&data=" + JSON.stringify(data);
+    }
+</script>
