@@ -11,7 +11,7 @@ fetch("/user/get")
     let clientId = ""
     let clientSecret = ""
 
-    if (typeof user === "object") {
+    if (typeof user.data === "object") {
       clientId = user.data.spotifyApiId
       clientSecret = user.data.spotifyApiSecret
     } else {
