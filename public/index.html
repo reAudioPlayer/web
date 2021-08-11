@@ -2,8 +2,8 @@
 
 <body>
     <p id="loginState">Login State Unknown</p>
-    <br>
     <button id="loginout" onclick="window.open('/login')">Log In</button>
+    <br>
     <br>
     <button onclick="link()">Link To Local</button>
 </body>
@@ -23,10 +23,10 @@
         .then(x => {
             if (x.status == 401) {
                 document.getElementById("loginState").innerHTML = "Logged Out"
-                document.getElementById("loginout").innerHTML = "Log Out"
-                document.getElementById("loginout").onclick = x => window.open('/logout')
             } else {
                 document.getElementById("loginState").innerHTML = "Logged In"
+                document.getElementById("loginout").innerHTML = "Log Out"
+                document.getElementById("loginout").onclick = x => window.open('/logout')
             }
         })
 </script>
