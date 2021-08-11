@@ -27,7 +27,7 @@ const config = {
     authRequired: false,
     auth0Logout: true,
     secret: 'a long, randomly-generated string stored in env',
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.BASE_URL,
     clientID: process.env.AUTH0_CLIENT_ID, // hide!!!
     issuerBaseURL: 'https://dev-l3q9y5qp.us.auth0.com'
 };

@@ -33,7 +33,7 @@ fetch("/user/get")
       })
     }
 
-    const redirectUri = 'http://localhost:3000/spotify/'
+    const redirectUri = process.env.BASE_URL + '/spotify/'
     const scope = "user-follow-read playlist-modify-public"
 
     function getToken() {
