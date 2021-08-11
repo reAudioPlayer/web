@@ -2,7 +2,7 @@
 
 <body>
     <p id="loginState">Login State Unknown</p>
-    <button id="loginout" onclick="window.open('/login')">Log In</button>
+    <button id="loginout" onclick="window.location.href = '/login'">Log In</button>
     <br>
     <br>
     <button onclick="link()">Link To Local</button>
@@ -26,7 +26,7 @@
             } else {
                 document.getElementById("loginState").innerHTML = "Logged In"
                 document.getElementById("loginout").innerHTML = "Log Out"
-                document.getElementById("loginout").onclick = x => window.open('/logout')
+                document.getElementById("loginout").onclick = x => window.location.href = '/logout'
             }
         })
 </script>
