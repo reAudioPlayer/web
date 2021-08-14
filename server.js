@@ -2,6 +2,9 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const spotifyApi = new SpotifyWebApi();
 
+// youtube music api
+const YoutubeMusicApi = require('youtube-music-api')
+
 // cors
 const cors = require("cors")
 
@@ -55,16 +58,13 @@ server.listen(port, function () {
 // ROUTES
 
 app.get('/user/get', async (req, res) => {
-    if(req.oidc.user)
-    {
+    if (req.oidc.user) {
         const data = await getUserData(req.oidc.user.email, req.oidc.user.sub);
         res.json({
             user: req.oidc.user,
             data
         })
-    }
-    else
-    {
+    } else {
         res.status(401).send(false)
     }
 });
@@ -94,7 +94,7 @@ app.get(["/spotify", "/spotify/", "/spotify/index.html"], requiresAuth(), functi
     res.sendFile(__dirname + '/public/spotify/index.html')
 })
 
-app.post('/spotify/releaseRadar', async function (req, res) {
+app.post('/spotify/releaseRadar', requiresAuth(), async function (req, res) {
     try {
         console.log(req.body);
         spotifyApi.setAccessToken(req.body.accessToken)
@@ -122,11 +122,20 @@ app.post('/spotify/releaseRadar', async function (req, res) {
     }
 });
 
-app.get('/spotify/preview/album/:id', async function (req, res) {
+app.get('/spotify/preview/album/:id', requiresAuth(), async function (req, res) {
     const data = await spotifyApi.getAlbumTracks(req.params.id, {
         limit: 1
     })
     res.redirect(data.body.items[0]["preview_url"])
+})
+
+app.post('/ytmusic/search', requiresAuth(), async function (req, res) {
+    const api = new YoutubeMusicApi()
+    const info = await api.initalize();
+
+    let result = await api.search(`${req.body.artist} ${req.body.title}`)
+    result = result.content.filter(x => x.type == "song");
+    res.json(result)
 })
 
 app.use(express.static(__dirname + '/public'));
