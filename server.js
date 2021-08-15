@@ -21,6 +21,9 @@ const app = express();
 const server = require('http').createServer(app);
 
 const port = process.env.PORT || 3000;
+const baseURL = process.env.BASE_URL || "http://localhost:" + port
+
+console.log(baseURL, typeof baseURL)
 
 const {
     auth
@@ -30,7 +33,7 @@ const config = {
     authRequired: false,
     auth0Logout: true,
     secret: 'a long, randomly-generated string stored in env',
-    baseURL: process.env.BASE_URL,
+    baseURL,
     clientID: process.env.AUTH0_CLIENT_ID, // hide!!!
     issuerBaseURL: 'https://dev-l3q9y5qp.us.auth0.com'
 };
@@ -96,11 +99,10 @@ app.get(["/spotify", "/spotify/", "/spotify/index.html"], requiresAuth(), functi
 
 app.post('/spotify/releaseRadar', requiresAuth(), async function (req, res) {
     try {
-        console.log(req.body);
         spotifyApi.setAccessToken(req.body.accessToken)
         let artists = []
         let data = await spotifyApi.getFollowedArtists({
-            limit: 50
+            limit: req.body.limit || 50
         });
         artists = data.body.artists.items
         arts = artists.map(x => x.id)
@@ -111,7 +113,7 @@ app.post('/spotify/releaseRadar', requiresAuth(), async function (req, res) {
                 limit: 10
             })
             const latestRelease = data.body.items.sort((a, b) => (a.release_date < b.release_date) ? 1 : ((b.release_date < a.release_date) ? -1 : 0))[0]
-            console.log(artist.name + " - " + latestRelease.name)
+            //console.log(artist.name + " - " + latestRelease.name)
             latestRelease.reason = artist.name
             releases.push(latestRelease)
         }
@@ -134,6 +136,7 @@ app.post('/ytmusic/search', requiresAuth(), async function (req, res) {
     const info = await api.initalize();
 
     let result = await api.search(`${req.body.artist} ${req.body.title}`)
+    console.log(req.body)
     result = result.content.filter(x => x.type == "song");
     res.json(result)
 })

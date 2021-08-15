@@ -1,16 +1,81 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <title>Apollo - Web</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="/index-src/master.css" type="text/css" rel="stylesheet" />
+
+    <script src="/src/spotify.js"></script>
+</head>
 
 <body>
-    <p id="loginState">Login State Unknown</p>
-    <button id="loginout" onclick="window.location.href = '/login'">Log In</button>
-    <br>
-    <br>
-    <button onclick="link()">Link To Local</button>
+    <div class="wrapper">
+        <div class="sidebar hidden">
+            <h2>Online Features</h2>
+            <a href="https://icons8.com/icon/7820/male-user">Male User icon by Icons8</a>
+        </div>
+        <div class="main">
+            <div class="header">
+                <div class="title">
+                    <h1>reAudioPlayer Apollo - Web</h1>
+                </div>
+                <div class="user">
+                    <div id="user-loggedIn" class="loggedIn">
+                        <div class="userinfo">
+                            <img alt="avatar" id="user-icon"
+                                src="https://img.icons8.com/ios/60/000000/user-male-circle.png">
+                            <p id="user-email">Your Email</p>
+                        </div>
+                        <div class="logout">
+                            <a href="/logout">Log Out</a>
+                        </div>
+                    </div>
+                    <div id="user-loggedOut" class="loggedOut">
+                        <a href="/login">Log In</a>
+                    </div>
+                </div>
+            </div>
+            <div class="body" id="body">
+                <div class="function">
+                    <a href="/spotify" class="linked-title">Spotify Release Radar</a>
+                    <div class="preview" id="spotify-preview">
+                    </div>
+                </div>
+
+                <div class="function">
+                    <a href="/youtube" class="linked-title">Youtube Music Finder</a>
+                    <div class="preview" id="youtube-preview">
+                        Run "Search On Youtube Music" on any spotify track
+                    </div>
+                </div>
+
+                <div class="function">
+                    <button onclick="link()" class="text-button title">Link Settings</button>
+                    <div class="preview">
+                        Link your stored settings to your local running app
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
 
 <script>
+    setTimeout(() => setScrollbarWidth(), 5000);
+
+    function setScrollbarWidth()
+    {
+        document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement.clientWidth) + "px")
+    }
+
     async function link() {
         const resp = await fetch("/user/get");
         const json = await resp.json();
@@ -21,12 +86,66 @@
 
     fetch("/user/get")
         .then(x => {
-            if (x.status == 401) {
-                document.getElementById("loginState").innerHTML = "Logged Out"
-            } else {
-                document.getElementById("loginState").innerHTML = "Logged In"
-                document.getElementById("loginout").innerHTML = "Log Out"
-                document.getElementById("loginout").onclick = x => window.location.href = '/logout'
+            console.log(x.status)
+            if (x.status == 401) { // logged out
+                document.getElementById("user-loggedOut").classList.remove("hidden")
+                document.getElementById("user-loggedIn").classList.add("hidden")
+                document.getElementById("body").classList.add("hidden")
+                console.log("logged out")
+                return;
+            } else { // logged in
+                document.getElementById("user-loggedOut").classList.add("hidden")
+                document.getElementById("user-loggedIn").classList.remove("hidden")
+                document.getElementById("body").classList.remove("hidden")
+                console.log("logged in")
+                spotifyStart("", json => {
+                    window.jdata = json;
+                    let text = "";
+                    for (let i = 0; i < json.length; i++)
+                    {
+                        const release = json[i];
+                        text += `<div class="card"><img onclick="window.open('${release["external_urls"].spotify}')" src="${release.images[0].url}"><h4>${release.name}</h4><h5>${release.artists.map(x => x.name).join(", ")}</h5><button class="text-button" onclick="search(${i})">Search On Youtube Music</button></div>`
+                    }
+
+                    document.getElementById("spotify-preview").innerHTML = text;
+                    setScrollbarWidth();
+                });
+                return x.json()
             }
         })
+        .then(json => {
+            if (json && json.user) {
+                document.getElementById("user-icon").src = json.user.picture
+                document.getElementById("user-email").innerText = json.user.email
+            }
+        })
+
+    async function search(i) {
+        const search = await fetch("/ytmusic/search", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                artist: window.jdata[i].artists[0].name,
+                title: window.jdata[i].name
+            })
+        });
+        const result = await search.json();
+        console.log(result)
+        setYoutubePreviewCards(result)
+    }
+
+    function setYoutubePreviewCards(json) {
+        let text = ""
+
+        for (const result of json) {
+            text +=
+                `<div class="card"><img onclick="window.open('https://music.youtube.com/watch?v=${result.videoId}')" src="${result.thumbnails[0].url.replace("w60-h60", "w150-h150")}"><h4>${result.name}</h4><h5>${result.artist.name}</h5></div>`
+        }
+
+        document.getElementById("youtube-preview").innerHTML = text;
+        setScrollbarWidth();
+    }
 </script>
