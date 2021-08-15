@@ -1,7 +1,7 @@
 # reAudioPlayer Apollo Server
 
-- http://eu-web.reap.ml/
-- http://us-web.reap.ml/ (not available yet)
+- https://eu-web.reap.ml/
+- https://us-web.reap.ml/ (not available yet)
 
 Check the server status: https://status.reap.ml/
 
