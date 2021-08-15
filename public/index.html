@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
     <link href="/index-src/master.css" type="text/css" rel="stylesheet" />
 
-    <script src="/src/spotify.js"></script>
+    <script src="/src/spotify1.js"></script>
 </head>
 
 <body>
@@ -44,6 +44,17 @@
             <div class="body" id="body">
                 <div class="function">
                     <a href="/spotify" class="linked-title">Spotify Release Radar</a>
+                    <details><summary>How to get client id / secret</summary>
+                    <pre>
+Head over to <a href = "https://developer.spotify.com/dashboard/applications">https://developer.spotify.com/dashboard/applications</a> and create an app.
+add the following redirect URIs:
+- https://eu-apollo.herokuapp.com/ (for the main dashboard)
+- https://eu-apollo.herokuapp.com/spotify (for the dedicated dashboard)
+- http://localhost:8080/callback (for the app)
+
+If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/server/issues/new)
+                    </pre>
+                    </details>
                     <div class="preview" id="spotify-preview">
                     </div>
                 </div>

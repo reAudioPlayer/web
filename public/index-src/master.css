@@ -125,6 +125,10 @@ a:hover {
     overflow-x: auto;
 }
 
+.main>.body>.function>* {
+    margin-left: 20px;
+}
+
 .main>.body>.function>.preview>.card {
     background-color: #282c34;
     border-radius: 18px;
@@ -190,4 +194,14 @@ h5 {
     font-weight: lighter;
     margin-top: 0;
     margin-bottom: 5px;
+}
+
+pre {
+    font-family: var(--font-family);
+    font-size: 12px;
+    margin-left: 17px;
+}
+
+summary {
+    font-size: 15px;
 }
