@@ -97,6 +97,10 @@ app.get(["/spotify", "/spotify/", "/spotify/index.html"], requiresAuth(), functi
     res.sendFile(__dirname + '/public/spotify/index.html')
 })
 
+app.get(["/settings", "/settings/", "/settings/index.html"], requiresAuth(), function (req, res) {
+    res.sendFile(__dirname + '/public/settings/index.html')
+})
+
 app.post('/spotify/releaseRadar', requiresAuth(), async function (req, res) {
     try {
         spotifyApi.setAccessToken(req.body.accessToken)

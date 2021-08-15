@@ -1,7 +1,9 @@
 :root {
+    --accent-1: #522783;
+    --accent-2: hsl(214, 80%, 24%);
     --main-gradient: linear-gradient(to right top,
-            #522783,
-            hsl(214, 80%, 24%));
+            var(--accent-1),
+            var(--accent-2));
 
     --glass-gradient: linear-gradient(to right bottom,
             rgba(0, 0, 0, 0.6),
@@ -125,6 +127,13 @@ a:hover {
     overflow-x: auto;
 }
 
+.main>.body>.function>.input {
+    background: var(--glass-gradient);
+    margin: 20px;
+    padding: 10px;
+    border-radius: 25px;
+}
+
 .main>.body>.function>* {
     margin-left: 20px;
 }
@@ -204,4 +213,30 @@ pre {
 
 summary {
     font-size: 15px;
+}
+
+.text-input, input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid whitesmoke;
+    color: whitesmoke;
+    min-width: 100px;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+button.negative {
+    background-color: whitesmoke;
+    color: var(--accent-2);
+    border: none;
+    border-radius: 20px;
+    font-size: 15px;
+    padding: 10px 20px 10px 20px;
+    font-weight: bold;
+}
+
+button.negative:hover {
+    background: var(--main-gradient);
+    color: whitesmoke;
+    cursor: pointer;
 }

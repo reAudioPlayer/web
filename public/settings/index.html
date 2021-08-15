@@ -23,7 +23,7 @@
         <div class="main">
             <div class="header">
                 <div class="title">
-                    <h1>reAudioPlayer Apollo - Web</h1>
+                    <h1>reAudioPlayer Apollo - Web / Settings</h1>
                 </div>
                 <div class="user">
                     <div id="user-loggedIn" class="loggedIn">
@@ -43,34 +43,28 @@
             </div>
             <div class="body" id="body">
                 <div class="function">
-                    <a href="/spotify" class="linked-title">Spotify Release Radar</a>
-                    <details>
-                        <summary>How to get client id / secret</summary>
-                        <pre>
-Head over to <a href = "https://developer.spotify.com/dashboard/applications">https://developer.spotify.com/dashboard/applications</a> and create an app.
-add the following redirect URIs:
-- https://eu-apollo.herokuapp.com/ (for the main dashboard)
-- https://eu-apollo.herokuapp.com/spotify (for the dedicated dashboard)
-- http://localhost:8080/callback (for the app)
-
-If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/server/issues/new)
-                    </pre>
-                    </details>
-                    <div class="preview" id="spotify-preview">
-                    </div>
-                </div>
-
-                <div class="function">
-                    <a href="/youtube" class="linked-title">Youtube Music Finder</a>
-                    <div class="preview" id="youtube-preview">
-                        Run "Search On Youtube Music" on any spotify track
-                    </div>
-                </div>
-
-                <div class="function">
-                    <button onclick="link()" class="text-button title">Link Settings</button>
-                    <div class="preview">
-                        Link your stored settings to your local running app
+                    <a href="/youtube" class="linked-title">API Keys</a>
+                    <div class="input">
+                        <h3>Spotify</h3>
+                        <label for="spotify-client-id">Client ID:</label>
+                        <!--input type="text" id="spotify-client-id"-->
+                        <span contenteditable="true" id="spotify-client-id" class="text-input"></span>
+                        <br>
+                        <label for="spotify-client-secret">Client Secret:</label>
+                        <span contenteditable="true" id="spotify-client-secret" class="text-input"></span>
+                        <h3>Youtube</h3>
+                        <label for="client-id">Youtube Key:</label>
+                        <span contenteditable="true" id="youtube-client-key" class="text-input"></span>
+                        <h3>IGDB</h3>
+                        <label for="igdb-client-id">Client ID:</label>
+                        <span contenteditable="true" id="igdb-client-id" class="text-input"></span>
+                        <br>
+                        <label for="igdb-client-secret">Client Secret:</label>
+                        <span contenteditable="true" id="igdb-client-secret" class="text-input"></span>
+                        <br>
+                        <br>
+                        <button onclick="save()" class="negative">Save</button>
+                        <br>
                     </div>
                 </div>
             </div>
@@ -96,6 +90,24 @@ If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/s
             .href) + "&data=" + JSON.stringify(data);
     }
 
+    async function save() {
+        const x = await fetch("/user/set", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                igdbApiId: document.getElementById("igdb-client-id").innerText,
+                igdbApiSecret: document.getElementById("igdb-client-secret").innerText,
+                youtubeApiKey: document.getElementById("youtube-client-key").innerText,
+                spotifyApiId: document.getElementById("spotify-client-id").innerText,
+                spotifyApiSecret: document.getElementById("spotify-client-secret").innerText
+            })
+        })
+        console.log(x);
+    }
+
     fetch("/user/get")
         .then(x => {
             console.log(x.status)
@@ -110,18 +122,6 @@ If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/s
                 document.getElementById("user-loggedIn").classList.remove("hidden")
                 document.getElementById("body").classList.remove("hidden")
                 console.log("logged in")
-                spotifyStart("", json => {
-                    window.jdata = json;
-                    let text = "";
-                    for (let i = 0; i < json.length; i++) {
-                        const release = json[i];
-                        text +=
-                            `<div class="card"><img onclick="window.open('${release["external_urls"].spotify}')" src="${release.images[0].url}"><h4>${release.name}</h4><h5>${release.artists.map(x => x.name).join(", ")}</h5><button class="text-button" onclick="search(${i})">Search On Youtube Music</button></div>`
-                    }
-
-                    document.getElementById("spotify-preview").innerHTML = text;
-                    setScrollbarWidth();
-                });
                 return x.json()
             }
         })
@@ -129,35 +129,12 @@ If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/s
             if (json && json.user) {
                 document.getElementById("user-icon").src = json.user.picture
                 document.getElementById("user-email").innerText = json.user.email
+
+                document.getElementById("spotify-client-id").innerText = json.data.spotifyApiId || ""
+                document.getElementById("spotify-client-secret").innerText = json.data.spotifyApiSecret || ""
+                document.getElementById("igdb-client-id").innerText = json.data.igdbApiId || ""
+                document.getElementById("igdb-client-secret").innerText = json.data.igdbApiSecret || ""
+                document.getElementById("youtube-client-key").innerText = json.data.youtubeApiKey || ""
             }
         })
-
-    async function search(i) {
-        const search = await fetch("/ytmusic/search", {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                artist: window.jdata[i].artists[0].name,
-                title: window.jdata[i].name
-            })
-        });
-        const result = await search.json();
-        console.log(result)
-        setYoutubePreviewCards(result)
-    }
-
-    function setYoutubePreviewCards(json) {
-        let text = ""
-
-        for (const result of json) {
-            text +=
-                `<div class="card"><img onclick="window.open('https://music.youtube.com/watch?v=${result.videoId}')" src="${result.thumbnails[0].url.replace("w60-h60", "w150-h150")}"><h4>${result.name}</h4><h5>${result.artist.name}</h5></div>`
-        }
-
-        document.getElementById("youtube-preview").innerHTML = text;
-        setScrollbarWidth();
-    }
 </script>
