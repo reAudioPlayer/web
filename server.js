@@ -291,8 +291,38 @@ const io = require('socket.io')(server, {
     }
 });
 
+const listeningSockets = { }
+
 io.on('connection', function (socket) {
     var addedUser = false; // has logged in
+
+    /*socket.on('share', function (msg) {
+        console.log("received")
+        socket.emit("received", msg)
+    });*/
+
+    socket.on("file subscribe", async msg => {
+        if (!listeningSockets[msg])
+        {
+            listeningSockets[msg] = [ ]
+        }
+
+        listeningSockets[msg].push(socket);
+    })
+
+    socket.on('share', async image => {
+        // image is an array of bytes
+        if (!listeningSockets[image.code])
+        {
+            return;
+        }
+
+        for (let i = 0; i < listeningSockets[image.code].length; i++)
+        {
+            listeningSockets[image.code][i].emit("received", image)
+        }
+
+    });
 
     // on attempted login
     socket.on('authorise', function (msg) {
