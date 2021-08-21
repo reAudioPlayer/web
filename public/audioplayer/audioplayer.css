@@ -4,7 +4,9 @@
 reaudioplayer {
     display: flex;
     flex-direction: column;
-    background: var(--glass-gradient);
+    background: linear-gradient(to right bottom,
+    rgba(0, 0, 0, 0.6),
+    rgba(0, 0, 0, 0.3));;
     margin: 20px;
     padding: 10px;
     border: none;
