@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons+Outlined");
+
 reaudioplayer {
     display: flex;
     flex-direction: column;
@@ -55,4 +58,5 @@ input[type="range"]:hover {
 
 p.note {
     font-size: 11px;
+    font-family: 'Poppins', sans-serif;
 }
