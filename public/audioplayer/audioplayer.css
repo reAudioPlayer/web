@@ -1,0 +1,58 @@
+reaudioplayer {
+    display: flex;
+    flex-direction: column;
+    background: var(--glass-gradient);
+    margin: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+}
+
+reaudioplayer>.upperUI, reaudioplayer>.lowerUI {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+reaudioplayer>.upperUI>span {
+    font-size: 40px;
+}
+
+reaudioplayer>.lowerUI {
+    justify-content: space-between;
+}
+
+reaudioplayer>.lowerUI>div {
+    flex: 1;
+}
+
+reaudioplayer>.lowerUI>.ui-wrapper-centre {
+    display: flex;
+    justify-content: center;
+    flex: 2;
+}
+
+reaudioplayer>.lowerUI>.ui-wrapper-centre>input {
+    width: 100%;
+}
+
+reaudioplayer>.lowerUI>.ui-wrapper-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+reaudioplayer>.lowerUI>.ui-wrapper-right>span {
+    font-size: 30px;
+}
+
+span.material-icons-outlined:hover {
+    cursor: pointer;
+}
+
+input[type="range"]:hover {
+    cursor: pointer;
+}
+
+p.note {
+    font-size: 11px;
+}

@@ -14,8 +14,10 @@
     <link href="/dist/dropzone.css" type="text/css" rel="stylesheet" />
 
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script src="/dist/dropzone.js"></script>
-    <script src="/src/spotify.js"></script>
+    <script type="text/javascript" src="/dist/dropzone.js"></script>
+    <script type="text/javascript" src="/src/spotify.js"></script>
+    <script type="text/javascript" src="/share/socket.js"></script>
+    <script type="text/javascript" src="/share/share.js"></script>
 </head>
 
 <body>
@@ -81,7 +83,7 @@ If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/s
                 <div class="function">
                     <a href="/share" class="linked-title">File Sharing</a><br>
                     <label for="code">Share Code:</label>
-                    <span contenteditable="false" onclick="console.warn(innerText)" id="code" class="text-input"></span>
+                    <span contenteditable="false" onclick="toClipboard(innerText)" id="code" class="text-input toclipboard"></span>
                     <form action="/file-upload" class="dropzone input" id="sendZone"></form>
                 </div>
             </div>
@@ -92,68 +94,8 @@ If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/s
 </html>
 
 <script>
-    Dropzone.options.sendZone = {
-        autoProcessQueue: false,
-        accept: function (file, done) {
-            window.file = file
-            share(file);
-            acceptFile(file);
-        }
-    }
-
-    function acceptFile(file) {
-        file.previewElement.classList.add("dz-success");
-        for (let i = 0; i < file.previewElement.children.length; i++) {
-            if (file.previewElement.children[i].className == "dz-progress") {
-                file.previewElement.children[i].remove();
-                break;
-            }
-        }
-    }
-
-    window.socket = io();
-
-    function makeid(length) {
-        var result = '';
-        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        var charactersLength = characters.length;
-        for (var i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() *
-                charactersLength));
-        }
-        return result;
-    }
-
-    document.getElementById("code").innerText = makeid(6);
-
-    function share(file) {
-        console.log("sending...")
-        console.log(file)
-        var chunks = []
-        var chunkSize = 500 * 1000
-        let i = chunkSize
-
-        for (; i < file.size; i += chunkSize) {
-            chunks.push(file.slice(i - chunkSize, i))
-        }
-
-        chunks.push(file.slice(i - chunkSize))
-
-        for (let j = 0; j < chunks.length; j++) {
-            msg = {
-                chunk: chunks[j],
-                name: file.name,
-                type: file.type,
-                code: document.getElementById("code").innerText,
-                chunkIndex: j,
-                chunkCount: chunks.length,
-                previewElement: file.previewElement.cloneNode(true).outerHTML
-            }
-
-            window.socket.emit('web.fileShare', msg);
-        }
-        console.log("sent")
-    }
+    document.getElementById("code").innerText = makeid(6)
+    dropzoneInit();
 </script>
 
 <script>
