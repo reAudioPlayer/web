@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <title>Apollo - Web / Share Files</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="/index-src/master.css" type="text/css" rel="stylesheet" />
+
+    <link href="/dist/dropzone.css" type="text/css" rel="stylesheet" />
+    <script src="/dist/dropzone.js"></script>
+    <script src="/src/spotify.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="sidebar hidden">
+            <h2>Online Features</h2>
+            <a href="https://icons8.com/icon/7820/male-user">Male User icon by Icons8</a>
+        </div>
+        <div class="main">
+            <div class="header">
+                <div class="title">
+                    <h1>reAudioPlayer Apollo - Web / Share</h1>
+                </div>
+                <div class="user">
+                    <div id="user-loggedIn" class="loggedIn">
+                        <div class="userinfo">
+                            <img alt="avatar" id="user-icon"
+                                src="https://img.icons8.com/ios/60/000000/user-male-circle.png">
+                            <a href="/settings" id="user-email">Your Email</a>
+                        </div>
+                        <div class="logout">
+                            <a href="/logout">Log Out</a>
+                        </div>
+                    </div>
+                    <div id="user-loggedOut" class="loggedOut">
+                        <a href="/login">Log In</a>
+                    </div>
+                </div>
+            </div>
+            <div class="body" id="body">
+                <div class="function">
+                    <h3>Share</h3>
+                    <label for="code">Share Code:</label>
+                    <span contenteditable="false" onclick="console.warn(innerText)" id="code" class="text-input"></span>
+                    <form action="/file-upload" class="dropzone input" id="sendZone"></form>
+                </div>
+                <div class="function">
+                    <h3>Receive</h3>
+                    <label for="code">Receive Code:</label>
+                    <span contenteditable="true" id="receiveCode" class="text-input"></span>
+                    <form action="/file-upload" class="dropzone input hidden" id="receiveZone"></form>
+                    <button onclick="subscribe()" class="negative">Subscribe</button>
+                    <div class="input flex" id="receiver"></div>
+                    <!--audio controls id="audioplayer"></audio-->
+                    <div class="input audioplayer">
+                        <audio id="audioplayer"></audio>
+                        <div class="upperUI">
+                            <span class="material-icons-outlined playPause" id="playPause" onclick="playPause()">
+                                play_circle_filled
+                            </span>
+                            <input type="range" value="100" oninput="volumeChange(value)">
+                            <span class="material-icons-outlined" id="volume" onclick="muteChange()">
+                                volume_up
+                            </span>
+                        </div>
+                        <div class="lowerUI">
+                            <div class="ui-wrapper-left"></div>
+                            <div class="ui-wrapper-centre">
+                                <p class="note" id="lbl-position">0:00</p>
+                                <input type="range" value="0" id="position" oninput="jump(value)">
+                                <p class="note" id="lbl-togo">-0:00</p>
+                            </div>
+                            <div class="ui-wrapper-right">
+                                <span class="material-icons-outlined download" onclick="downloadSong()">
+                                    file_download
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    window.player = document.getElementById("audioplayer")
+    window.player.ontimeupdate = x => {
+        const progressBar = document.getElementById("position")
+        progressBar.value = x.target.currentTime / x.target.duration * 100
+        document.getElementById("lbl-position").innerText = format(x.target.currentTime)
+        document.getElementById("lbl-togo").innerText = format(x.target.duration)
+    }
+
+    window.player.onplay = () => playPause(true)
+    window.player.onpause = () => playPause(true)
+
+    function volumeChange(value) {
+        const player = document.getElementById("audioplayer")
+        player.muted = false
+        player.volume = value / 100;
+
+        document.getElementById("volume").innerHTML = getVolumeIcon(player)
+    }
+
+    function muteChange() {
+        const player = document.getElementById("audioplayer")
+        player.muted = !player.muted
+        document.getElementById("volume").innerHTML = getVolumeIcon(player)
+    }
+
+    function getVolumeIcon(player) {
+        if (player.muted) {
+            return "volume_off"
+        }
+        if (player.volume < 0.5) {
+            return "volume_down"
+        }
+
+        return "volume_up"
+    }
+
+    function playPause(updateOnly = false) {
+        const player = document.getElementById("audioplayer")
+        if (!updateOnly) {
+            if (player.paused) {
+                player.play();
+            } else {
+                player.pause();
+            }
+        }
+        document.getElementById("playPause").innerHTML = player.paused ? "play_circle_filled" : "pause_circle_filled"
+    }
+
+    function loadToAudioPlayer(src, name) {
+        const player = document.getElementById("audioplayer")
+        player.src = src
+        player.name = name
+        player.play()
+    }
+
+    function downloadSong() {
+        const player = document.getElementById("audioplayer")
+        downloadWithName(player.src, player.name)
+    }
+
+    function jump(value) {
+        const player = document.getElementById("audioplayer")
+        player.currentTime = player.duration / 100 * value
+    }
+
+    function format(time) {
+        var mins = ~~((time % 3600) / 60);
+        var secs = ~~time % 60;
+
+        var ret = "";
+        ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+        ret += "" + secs;
+        return ret;
+    }
+</script>
+
+<script>
+    function tryRemove() {
+        const receiveZone = document.getElementById("receiveZone");
+
+        if (receiveZone.children.length == 0) {
+            setTimeout(tryRemove, 20)
+        }
+
+        for (let i = 0; i < receiveZone.children.length; i++) {
+            if (receiveZone.children[i].className == "dz-default dz-message") {
+                receiveZone.children[i].remove();
+            }
+        }
+    }
+    tryRemove();
+
+    Dropzone.options.sendZone = {
+        autoProcessQueue: false,
+        accept: function (file, done) {
+            window.file = file
+            share(file);
+            acceptFile(file);
+        }
+    }
+    /*Dropzone.options.receiveZone = {
+        autoProcessQueue: false,
+        accept: function (file, done) {
+            acceptFile(file);
+        }
+    }*/
+
+    function acceptFile(file) {
+        file.previewElement.classList.add("dz-success");
+        for (let i = 0; i < file.previewElement.children.length; i++) {
+            if (file.previewElement.children[i].className == "dz-progress") {
+                file.previewElement.children[i].remove();
+                break;
+            }
+        }
+    }
+
+    window.hideBody = false;
+</script>
+
+<script src="/index-src/login.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+<script>
+    window.socket = io();
+
+    function makeid(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() *
+                charactersLength));
+        }
+        return result;
+    }
+
+    document.getElementById("code").innerText = makeid(6);
+
+    function share(file) {
+        console.log("sending...")
+        console.log(file)
+        var chunks = []
+        var chunkSize = 500 * 1000
+        let i = chunkSize
+
+        for (; i < file.size; i += chunkSize) {
+            chunks.push(file.slice(i - chunkSize, i))
+        }
+
+        chunks.push(file.slice(i - chunkSize))
+
+        for (let j = 0; j < chunks.length; j++) {
+            msg = {
+                chunk: chunks[j],
+                name: file.name,
+                type: file.type,
+                code: document.getElementById("code").innerText,
+                chunkIndex: j,
+                chunkCount: chunks.length,
+                previewElement: file.previewElement.cloneNode(true).outerHTML
+            }
+
+            window.socket.emit('web.fileShare', msg);
+        }
+        console.log("sent")
+    }
+
+    function subscribe() {
+        window.socket.emit("web.fileSubscribe", document.getElementById("receiveCode").innerText)
+    }
+
+    let chunks = []
+
+    window.socket.on("web.fileReceived", msg => {
+        console.log("received")
+        if (msg.chunkIndex == 0) {
+            chunks = [];
+        }
+        chunks.push(msg.chunk)
+        if (msg.chunkIndex == msg.chunkCount - 1) {
+            var blob = new Blob([...chunks], {
+                type: msg.type
+            });
+            var src = window.URL.createObjectURL(blob);
+            //downloadWithName(src, msg.name)
+            /*var div = document.createElement("div")
+            document.getElementById("receiveZone").appendChild(div)
+            div.outerHTML = msg.previewElement*/
+            window.msg = msg
+            window.blob = blob;
+            preview(blob, msg, src)
+        }
+    })
+
+    var truncate = function (fullStr, strLen, separator) {
+        if (fullStr.length <= strLen) return fullStr;
+
+        separator = separator || '...';
+
+        var sepLen = separator.length,
+            charsToShow = strLen - sepLen,
+            frontChars = Math.ceil(charsToShow / 2),
+            backChars = Math.floor(charsToShow / 2);
+
+        return fullStr.substr(0, frontChars) +
+            separator +
+            fullStr.substr(fullStr.length - backChars);
+    };
+
+    function preview(blob, msg, src) {
+        const previewMode = msg.type.split("/")[0];
+        const wrapper = document.getElementById("receiver");
+        let text = wrapper.innerHTML;
+        text += `<div class="previewCard">`;
+
+        const onclickevent = `downloadWithName('${src}', '${msg.name}')`
+
+        if (previewMode == "image") {
+            text += `<img class="filePreview" onclick="${onclickevent}" src="${src}">`
+        } else if (previewMode == "audio") {
+            text +=
+                `<img class="filePreview" onclick="loadToAudioPlayer('${src}', '${msg.name}')" src="/src/music_placeholder.png">`
+        } else {
+            text += `<img class="filePreview" onclick="${onclickevent}" src="/src/file_placeholder.jpg">`
+        }
+
+        text += `<h4>${truncate(msg.name, 15)}</h4></div>`
+
+        wrapper.innerHTML = text;
+    }
+
+    function downloadWithName(objectUrl, name) {
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        a.href = objectUrl;
+        a.download = name;
+        a.click();
+        a.remove()
+    };
+</script>

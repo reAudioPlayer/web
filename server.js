@@ -296,12 +296,7 @@ const listeningSockets = { }
 io.on('connection', function (socket) {
     var addedUser = false; // has logged in
 
-    /*socket.on('share', function (msg) {
-        console.log("received")
-        socket.emit("received", msg)
-    });*/
-
-    socket.on("file subscribe", async msg => {
+    socket.on("web.fileSubscribe", async msg => {
         if (!listeningSockets[msg])
         {
             listeningSockets[msg] = [ ]
@@ -310,7 +305,8 @@ io.on('connection', function (socket) {
         listeningSockets[msg].push(socket);
     })
 
-    socket.on('share', async image => {
+    socket.on('web.fileShare', async image => {
+        console.log(image)
         // image is an array of bytes
         if (!listeningSockets[image.code])
         {
@@ -319,7 +315,7 @@ io.on('connection', function (socket) {
 
         for (let i = 0; i < listeningSockets[image.code].length; i++)
         {
-            listeningSockets[image.code][i].emit("received", image)
+            listeningSockets[image.code][i].emit("web.fileReceived", image)
         }
 
     });

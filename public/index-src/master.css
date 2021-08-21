@@ -113,7 +113,7 @@ a:hover {
     margin: 20px;
     padding: 10px;
     border-radius: 25px;
-    position:relative;
+    position: relative;
 }
 
 .main>.body>.function>.preview {
@@ -131,7 +131,20 @@ a:hover {
     background: var(--glass-gradient);
     margin: 20px;
     padding: 10px;
+    border: none;
     border-radius: 25px;
+}
+
+.main>.body>.function>.input.flex {
+    display: flex;
+}
+
+.dz-preview {
+    background: none !important;
+}
+
+.dz-details {
+    cursor: pointer !important;
 }
 
 .main>.body>.function>* {
@@ -215,7 +228,8 @@ summary {
     font-size: 15px;
 }
 
-.text-input, input {
+.text-input,
+input {
     background: none;
     border: none;
     border-bottom: 1px solid whitesmoke;
@@ -239,4 +253,82 @@ button.negative:hover {
     background: var(--main-gradient);
     color: whitesmoke;
     cursor: pointer;
+}
+
+img.filePreview {
+    height: 120px;
+    width: 120px;
+    border-radius: 20px;
+    margin: 16px;
+}
+
+img.filePreview:hover {
+    cursor: pointer;
+    -webkit-filter: blur(8px);
+    filter: blur(8px);
+    -webkit-transform: scale(1.05, 1.05);
+    -moz-transform: scale(1.05, 1.05);
+    -ms-transform: scale(1.05, 1.05);
+    -o-transform: scale(1.05, 1.05);
+    transform: scale(1.05, 1.05);
+}
+
+div.previewCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.audioplayer {
+    display: flex;
+    flex-direction: column;
+}
+
+.audioplayer>.upperUI, .audioplayer>.lowerUI {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.audioplayer>.upperUI>span {
+    font-size: 40px;
+}
+
+.audioplayer>.lowerUI {
+    justify-content: space-between;
+}
+
+.audioplayer>.lowerUI>div {
+    flex: 1;
+}
+
+.audioplayer>.lowerUI>.ui-wrapper-centre {
+    display: flex;
+    justify-content: center;
+    flex: 2;
+}
+
+.audioplayer>.lowerUI>.ui-wrapper-centre>input {
+    width: 100%;
+}
+
+.audioplayer>.lowerUI>.ui-wrapper-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.audioplayer>.lowerUI>.ui-wrapper-right>span {
+    font-size: 30px;
+}
+
+span.material-icons-outlined:hover {
+    cursor: pointer;
+}
+
+input[type="range"]:hover {
+    cursor: pointer;
+}
+
+p.note {
+    font-size: 11px;
 }

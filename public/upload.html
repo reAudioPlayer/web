@@ -8,9 +8,8 @@
 <script>
 window.socket = io();
 
-function share() {
+function share(file) {
     console.log("sending...")
-    var file = document.getElementById("input").files[0]
     console.log(file)
     var chunks = [ ]
     var chunkSize = 1000 * 1000
