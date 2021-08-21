@@ -171,20 +171,6 @@
 </script>
 
 <script>
-    function tryRemove() {
-        const receiveZone = document.getElementById("receiveZone");
-
-        if (receiveZone.children.length == 0) {
-            setTimeout(tryRemove, 20)
-        }
-
-        for (let i = 0; i < receiveZone.children.length; i++) {
-            if (receiveZone.children[i].className == "dz-default dz-message") {
-                receiveZone.children[i].remove();
-            }
-        }
-    }
-    tryRemove();
 
     Dropzone.options.sendZone = {
         autoProcessQueue: false,
@@ -194,12 +180,6 @@
             acceptFile(file);
         }
     }
-    /*Dropzone.options.receiveZone = {
-        autoProcessQueue: false,
-        accept: function (file, done) {
-            acceptFile(file);
-        }
-    }*/
 
     function acceptFile(file) {
         file.previewElement.classList.add("dz-success");

@@ -127,7 +127,7 @@ a:hover {
     overflow-x: auto;
 }
 
-.main>.body>.function>.input {
+.main>.body>.function>.input, .dropzone.input {
     background: var(--glass-gradient);
     margin: 20px;
     padding: 10px;
