@@ -1,7 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons+Outlined");
 
-reaudioplayer {
+.hidden {
+    display: none;
+}
+
+reaudioplayer>.ui {
     display: flex;
     flex-direction: column;
     background: linear-gradient(to right bottom,
@@ -13,40 +17,40 @@ reaudioplayer {
     border-radius: 25px;
 }
 
-reaudioplayer>.upperUI, reaudioplayer>.lowerUI {
+reaudioplayer>.ui>.upperUI, reaudioplayer>.ui>.lowerUI {
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
-reaudioplayer>.upperUI>span {
+reaudioplayer>.ui>.upperUI>span {
     font-size: 40px;
 }
 
-reaudioplayer>.lowerUI {
+reaudioplayer>.ui>.lowerUI {
     justify-content: space-between;
 }
 
-reaudioplayer>.lowerUI>div {
+reaudioplayer>.ui>.lowerUI>div {
     flex: 1;
 }
 
-reaudioplayer>.lowerUI>.ui-wrapper-centre {
+reaudioplayer>.ui>.lowerUI>.ui-wrapper-centre {
     display: flex;
     justify-content: center;
     flex: 2;
 }
 
-reaudioplayer>.lowerUI>.ui-wrapper-centre>input {
+reaudioplayer>.ui>.lowerUI>.ui-wrapper-centre>input {
     width: 100%;
 }
 
-reaudioplayer>.lowerUI>.ui-wrapper-right {
+reaudioplayer>.ui>.lowerUI>.ui-wrapper-right {
     display: flex;
     justify-content: flex-end;
 }
 
-reaudioplayer>.lowerUI>.ui-wrapper-right>span {
+reaudioplayer>.ui>.lowerUI>.ui-wrapper-right>span {
     font-size: 30px;
 }
 
@@ -61,4 +65,41 @@ input[type="range"]:hover {
 p.note {
     font-size: 11px;
     font-family: 'Poppins', sans-serif;
+}
+
+reaudioplayer>img.cover {
+    height: 80px;
+    width: 80px;
+    border-radius: 20px;
+    z-index: 1;
+    position: absolute;
+    top: 30;
+    left: 30;
+}
+
+reaudioplayer>h4.title, reaudioplayer>h5.artist {
+    height: 80px;
+    width: 15%;
+    z-index: 1;
+    position: absolute;
+    top: 70;
+    left: 120;
+    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+reaudioplayer>h5.artist {
+    top: 90;
+    font-size: .8rem;
+    font-weight: lighter;
+    text-transform: none;
+}
+
+reaudioplayer>.ui {
+    z-index: 0;
 }
