@@ -13,9 +13,7 @@ class reVisualiserV2 {
     }
 
     async loadFile(file) {
-        console.log(file)
         var md = await getMetaData(file)
-        console.log(md)
         loadToAudioPlayer(URL.createObjectURL(file), file.name, md)
 
         if (!window.revisualiserv2.src) {

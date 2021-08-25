@@ -30,9 +30,11 @@
 </div>
 
 <script>
-    window.socket.on("web.msgReceived", msg => {
-        console.log("received", msg.command, msg.data)
+    window.addEventListener("load", () => {
+        document.getElementById("reap.0-position").disabled = true
+    });
 
+    window.socket.on("web.msgReceived", msg => {
         switch(msg.command)
         {
             case "pause":

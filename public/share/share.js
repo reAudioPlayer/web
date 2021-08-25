@@ -21,8 +21,6 @@ function share(file, code = document.getElementById("code").innerText) {
 
     chunks.push(file.slice(i - chunkSize))
 
-    console.log(code)
-
     for (let j = 0; j < chunks.length; j++) {
         msg = {
             chunk: chunks[j],
