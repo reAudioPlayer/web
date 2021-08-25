@@ -1,0 +1,31 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.3/dat.gui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.3.0/simplex-noise.min.js"></script>
+<script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js"></script>
+<script>
+    window.reApExperimentalTags = true
+</script>
+<script src="/audioplayer/audioplayer.js"></script>
+<link href="/audioplayer/audioplayer.css" type="text/css" rel="stylesheet" />
+<link href="/visualiser/v1/style.css" type="text/css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"
+    integrity="sha512-YsR46MmyChktsyMMou+Bs74oCa/CDdwft7rJ5wlnmDzMj1mzqncsfJamEEf99Nk7IB0JpTMo5hS8rxB49FUktQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="/visualiser/v1/generator.js"></script>
+<script src="/visualiser/v1/loader.js"></script>
+
+<html>
+<div id="content">
+    <label for="thefile" class="file"> Choose an audio file
+        <input type="file" id="thefile" accept="audio/*" />
+    </label>
+
+    <!--audio id="audio" controls></audio-->
+    <reaudioplayer></reaudioplayer>
+    <div id="out"></div>
+</div>
+
+</html>

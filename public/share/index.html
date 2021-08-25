@@ -86,3 +86,10 @@
     document.getElementById("receiveCode").innerText = rcode;
     subscribe();
 </script>
+
+<script>
+    function commandListener(command, data = null)
+    {
+        window.socket.emit("web.fileMsg", {command, code: document.getElementById("code").innerText, data})
+    }
+</script>

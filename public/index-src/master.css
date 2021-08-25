@@ -137,6 +137,7 @@ a:hover {
 
 .main>.body>.function>.input.flex {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .dz-preview {

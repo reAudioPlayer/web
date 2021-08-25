@@ -306,8 +306,6 @@ io.on('connection', function (socket) {
     })
 
     socket.on('web.fileShare', async image => {
-        console.log(image)
-        // image is an array of bytes
         if (!listeningSockets[image.code])
         {
             return;
@@ -317,7 +315,18 @@ io.on('connection', function (socket) {
         {
             listeningSockets[image.code][i].emit("web.fileReceived", image)
         }
+    });
 
+    socket.on('web.fileMsg', async msg => {
+        if (!listeningSockets[msg.code])
+        {
+            return;
+        }
+
+        for (let i = 0; i < listeningSockets[msg.code].length; i++)
+        {
+            listeningSockets[msg.code][i].emit("web.msgReceived", msg)
+        }
     });
 
     // on attempted login

@@ -1,0 +1,51 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.3/dat.gui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.3.0/simplex-noise.min.js"></script>
+<script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js"></script>
+<script>
+    window.reApExperimentalTags = true
+</script>
+<script src="/audioplayer/audioplayer.js"></script>
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script src="/share/socket.js"></script>
+<script src="/share/receive.js"></script>
+
+<link href="/audioplayer/audioplayer.css" type="text/css" rel="stylesheet" />
+<link href="/visualiser/v2/style.css" type="text/css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"
+    integrity="sha512-YsR46MmyChktsyMMou+Bs74oCa/CDdwft7rJ5wlnmDzMj1mzqncsfJamEEf99Nk7IB0JpTMo5hS8rxB49FUktQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="/visualiser/v2/generator.js"></script>
+<script src="/visualiser/v2/loader.js"></script>
+
+<html>
+<div id="content">
+    <!--audio id="audio" controls></audio-->
+    <reaudioplayer></reaudioplayer>
+    <div id="out"></div>
+</div>
+
+<script>
+    window.socket.on("web.msgReceived", msg => {
+        console.log("received", msg.command, msg.data)
+
+        switch(msg.command)
+        {
+            case "pause":
+                window.players[0].pause();
+                playPause(true, 0);
+                break;
+            case "play":
+                window.players[0].play();
+                playPause(true, 0);
+                break;
+            case "jump":
+                jump(msg.data, 0)
+                break;
+        }
+    });
+</script>

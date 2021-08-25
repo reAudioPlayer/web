@@ -9,7 +9,7 @@ function makeid(length) {
     return result;
 }
 
-function share(file) {
+function share(file, code = document.getElementById("code").innerText) {
     console.log("[share/share.js]", file)
     var chunks = []
     var chunkSize = 500 * 1000
@@ -21,15 +21,17 @@ function share(file) {
 
     chunks.push(file.slice(i - chunkSize))
 
+    console.log(code)
+
     for (let j = 0; j < chunks.length; j++) {
         msg = {
             chunk: chunks[j],
             name: file.name,
             type: file.type,
-            code: document.getElementById("code").innerText,
+            code,
             chunkIndex: j,
             chunkCount: chunks.length,
-            previewElement: file.previewElement.cloneNode(true).outerHTML
+            previewElement: file.previewElement?.cloneNode(true)?.outerHTML
         }
 
         window.socket.emit('web.fileShare', msg);

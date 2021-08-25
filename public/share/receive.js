@@ -1,5 +1,8 @@
-function subscribe() {
-    window.socket.emit("web.fileSubscribe", document.getElementById("receiveCode").innerText)
+let onFile = preview
+
+function subscribe(onFile = preview, code = document.getElementById("receiveCode").innerText) {
+    this.onFile = onFile
+    window.socket.emit("web.fileSubscribe", code)
 }
 
 let chunks = []
@@ -21,7 +24,7 @@ window.socket.on("web.fileReceived", msg => {
         div.outerHTML = msg.previewElement*/
         window.msg = msg
         window.blob = blob;
-        preview(blob, msg, src)
+        this.onFile(blob, msg, src)
     }
 })
 
