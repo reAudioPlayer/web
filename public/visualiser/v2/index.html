@@ -32,6 +32,7 @@
 <script>
     window.addEventListener("load", () => {
         document.getElementById("reap.0-position").disabled = true
+        document.getElementById("reap.0-playPause").classList.add("hidden")
     });
 
     window.socket.on("web.msgReceived", msg => {
