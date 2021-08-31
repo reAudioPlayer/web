@@ -8,9 +8,10 @@ function subscribe(onFile = preview, code = document.getElementById("receiveCode
 let chunks = []
 
 window.socket.on("web.fileReceived", msg => {
-    console.log("received")
+    //console.log("received")
     if (msg.chunkIndex == 0) {
         chunks = [];
+        console.log(`[share/receive.js] receiving in ${msg.chunkCount} chunks`);
     }
     chunks.push(msg.chunk)
     if (msg.chunkIndex == msg.chunkCount - 1) {
@@ -25,6 +26,7 @@ window.socket.on("web.fileReceived", msg => {
         window.msg = msg
         window.blob = blob;
         this.onFile(blob, msg, src)
+        console.log(`[share/receive.js] received`);
     }
 })
 

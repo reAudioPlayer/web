@@ -10,9 +10,9 @@ function makeid(length) {
 }
 
 function share(file, code = document.getElementById("code").innerText) {
-    console.log("[share/share.js]", file)
+    console.log("[share/share.js] sending...")
     var chunks = []
-    var chunkSize = 500 * 1000
+    var chunkSize = 1000 * 1000 // chunkSize in bytes, chunkSize is 0.8MB
     let i = chunkSize
 
     for (; i < file.size; i += chunkSize) {
@@ -35,12 +35,13 @@ function share(file, code = document.getElementById("code").innerText) {
         window.socket.emit('web.fileShare', msg);
     }
 
-    console.log("[share/share.js] sent")
+    console.log(`[share/share.js] sent in ${chunks.length} chunks`);
 }
 
 function dropzoneInit() {
     Dropzone.options.sendZone = {
         autoProcessQueue: false,
+        maxFilesize: 1024 * 10,
         accept: function (file, done) {
             window.file = file
             share(file);
