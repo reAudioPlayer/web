@@ -12,7 +12,7 @@ function makeid(length) {
 function share(file, code = document.getElementById("code").innerText) {
     console.log("[share/share.js] sending...")
     var chunks = []
-    var chunkSize = 1000 * 1000 // chunkSize in bytes, chunkSize is 0.8MB
+    var chunkSize = 800 * 1000 // chunkSize in bytes, chunkSize is 0.8MB
     let i = chunkSize
 
     for (; i < file.size; i += chunkSize) {
