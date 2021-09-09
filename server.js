@@ -5,6 +5,13 @@ const spotifyApi = new SpotifyWebApi();
 // youtube music api
 const YoutubeMusicApi = require('youtube-music-api')
 
+// youtube download api
+const youtubedl = require('youtube-dl-exec')
+const fs = require("fs")
+const NodeID3 = require('node-id3')
+const request = require('request');
+const util = require("util");
+
 // cors
 const cors = require("cors")
 
@@ -28,6 +35,9 @@ console.log(baseURL, typeof baseURL)
 const {
     auth
 } = require('express-openid-connect');
+const {
+    env
+} = require('process');
 
 const config = {
     authRequired: false,
@@ -140,10 +150,102 @@ app.post('/ytmusic/search', requiresAuth(), async function (req, res) {
     const info = await api.initalize();
 
     let result = await api.search(`${req.body.artist} ${req.body.title}`)
-    console.log(req.body)
+
     result = result.content.filter(x => x.type == "song");
     res.json(result)
 })
+
+app.get('/ytmusic/download/artist/:artist/title/:title', async function (req, res) {
+    const api = new YoutubeMusicApi()
+    const info = await api.initalize();
+
+    let result = await api.search(`${req.params.artist} ${req.params.title}`)
+
+    result = result.content.filter(x => x.type == "song");
+
+    //res.json(result[0])
+
+    console.log(req.params, result[0].videoId)
+
+    const filename = await downloadFile(result[0].videoId)
+    res.sendFile(filename, (err) => {
+        if (err) {
+            next(err);
+        } else {
+            console.log('Sent:', filename);
+            fs.unlink(filename, function (err) {
+                // log any error
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+    })
+    //fs.rm(filename);
+})
+
+// http://localhost:3000/ytmusic/download/id/1l8G2ybbEpw/spotifyId/0tWYNvbtncD1lZ4iwDpdCc/spotifyAT/{accesstoken}
+app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', async function (req, res) {
+    const api = new YoutubeMusicApi()
+    const info = await api.initalize();
+
+    try {
+        spotifyApi.setAccessToken(req.params.accessToken)
+    } catch {}
+
+    console.log(req.params.id, req.params.spotify)
+
+    const filename = await downloadFile(req.params.id)
+
+    const track = (await spotifyApi.getTracks([req.params.spotify], {
+        limit: 1
+    }))?.body?.tracks?.[0]
+
+    console.log(track)
+    console.log(track.album.images[0].url)
+
+    const r = await request(track.album.images[0].url)
+    await r.pipe(fs.createWriteStream(`${__dirname}\\c-${req.params.id}.jpg`))
+
+    const tags = {
+        title: track.name,
+        artist: track.artists.map(x => x.name).join(", "),
+        album: track.album.name,
+        APIC: `${__dirname}\\c-${req.params.id}.jpg`
+    }
+
+    NodeID3.write(tags, filename)
+
+    res.sendFile(filename, function (err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('Sent:', filename);
+            fs.unlink(filename, function(err) {
+                // log any error
+                if (err) {
+                    console.log(err);
+                }
+            });
+            fs.unlink(`${__dirname}\\c-${req.params.id}.jpg`, err => {})
+        }
+    })
+})
+
+async function downloadFile(id) {
+    await youtubedl('http://www.youtube.com/v/' + id, {
+        continue: true,
+        ignoreErrors: true,
+        noOverwrites: true,
+        extractAudio: true,
+        audioFormat: "mp3",
+        output: __dirname + "\\" + id + ".%(ext)s"
+    });
+
+    console.log("downloaded!")
+
+    return __dirname + "\\" + id + ".mp3"
+}
 
 app.use(express.static(__dirname + '/public'));
 
@@ -291,40 +393,35 @@ const io = require('socket.io')(server, {
     }
 });
 
-const listeningSockets = { }
+const listeningSockets = {}
 
 io.on('connection', function (socket) {
     var addedUser = false; // has logged in
 
     socket.on("web.fileSubscribe", async msg => {
-        if (!listeningSockets[msg])
-        {
-            listeningSockets[msg] = [ ]
+        if (!listeningSockets[msg]) {
+            listeningSockets[msg] = []
         }
 
         listeningSockets[msg].push(socket);
     })
 
     socket.on('web.fileShare', async image => {
-        if (!listeningSockets[image.code])
-        {
+        if (!listeningSockets[image.code]) {
             return;
         }
 
-        for (let i = 0; i < listeningSockets[image.code].length; i++)
-        {
+        for (let i = 0; i < listeningSockets[image.code].length; i++) {
             listeningSockets[image.code][i].emit("web.fileReceived", image)
         }
     });
 
     socket.on('web.fileMsg', async msg => {
-        if (!listeningSockets[msg.code])
-        {
+        if (!listeningSockets[msg.code]) {
             return;
         }
 
-        for (let i = 0; i < listeningSockets[msg.code].length; i++)
-        {
+        for (let i = 0; i < listeningSockets[msg.code].length; i++) {
             listeningSockets[msg.code][i].emit("web.msgReceived", msg)
         }
     });
