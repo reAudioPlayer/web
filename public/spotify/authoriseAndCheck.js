@@ -14,3 +14,45 @@ spotifyStart("spotify/", json => {
   }
   document.getElementById("library").innerHTML = library;
 })
+
+function filterLib() {
+  let search = document.getElementById("search").value;
+  const library = document.getElementById("library");
+
+  const invertedSearch = search.substr(0, 1) == "-";
+  search = search.substr(0, 1) == "-" ? search.substr(1) : search;
+
+  const onmatch = invertedSearch ? hide : show;
+  const onnomatch = invertedSearch ? show : hide;
+
+  if (search.length == 0) {
+    for (let i = 0; i < library.children.length; i++) {
+      show(library.children[i].classList)
+    }
+    return;
+  }
+
+  for (let i = 0; i < library.children.length; i++) {
+    const game = library.children[i];
+
+    const results = search.split(' ').filter(x => jdata[i].keywords.toLowerCase().includes(x.toLowerCase()));
+
+    if (results && results.length == search.split(' ').length) {
+      onmatch(game.classList);
+    } else {
+      onnomatch(game.classList);
+    }
+  }
+}
+
+function show(classlist) {
+  if (classlist.contains("hidden")) {
+    classlist.remove("hidden");
+  }
+}
+
+function hide(classlist) {
+  if (!classlist.contains("hidden")) {
+    classlist.add("hidden");
+  }
+}
