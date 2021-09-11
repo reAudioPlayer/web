@@ -284,7 +284,7 @@ async function downloadFile(id) {
         noOverwrites: true,
         extractAudio: true,
         audioFormat: "mp3",
-        output: __dirname + "\\" + id + ".%(ext)s"
+        output: __dirname + "/tmp/" + id + ".%(ext)s"
     });
 
     console.log("downloaded!")
