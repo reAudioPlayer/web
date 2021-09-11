@@ -1,4 +1,4 @@
-function spotifyStart(redirectEndpoint, callback) {
+function spotifyStart(redirectEndpoint, callback, noFetch = false) {
     fetch("/user/get")
         .then(resp => {
             const contentType = resp.headers.get("content-type");
@@ -87,6 +87,11 @@ function spotifyStart(redirectEndpoint, callback) {
                 getToken();
             } else {
                 window.accessToken = window.location.hash.replace("#access_token=", "").split("&")[0]
+
+                if (noFetch)
+                {
+                    return
+                }
 
                 fetch("/spotify/releaseRadar", {
                     method: "POST",

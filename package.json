@@ -11,6 +11,7 @@
     "node-url-shortener": "^1.1.11",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
+    "request-promise": "^4.2.6",
     "sequelize": "^6.6.2",
     "sequelize-cli": "^6.2.0",
     "socket.io": "^4.0.1",

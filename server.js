@@ -8,9 +8,9 @@ const YoutubeMusicApi = require('youtube-music-api')
 // youtube download api
 const youtubedl = require('youtube-dl-exec')
 const fs = require("fs")
+const fsp = require('fs').promises
 const NodeID3 = require('node-id3')
-const request = require('request');
-const util = require("util");
+const request = require('request-promise');
 
 // cors
 const cors = require("cors")
@@ -38,6 +38,9 @@ const {
 const {
     env
 } = require('process');
+const {
+    findSourceMap
+} = require('module');
 
 const config = {
     authRequired: false,
@@ -107,6 +110,10 @@ app.get(["/spotify", "/spotify/", "/spotify/index.html"], requiresAuth(), functi
     res.sendFile(__dirname + '/public/spotify/index.html')
 })
 
+app.get(["/youtube-dl", "/youtube-dl/", "/youtube-dl/index.html"], requiresAuth(), function (req, res) {
+    res.sendFile(__dirname + '/public/youtube-dl/index.html')
+})
+
 app.get(["/settings", "/settings/", "/settings/index.html"], requiresAuth(), function (req, res) {
     res.sendFile(__dirname + '/public/settings/index.html')
 })
@@ -155,7 +162,7 @@ app.post('/ytmusic/search', requiresAuth(), async function (req, res) {
     res.json(result)
 })
 
-app.get('/ytmusic/download/artist/:artist/title/:title', async function (req, res) {
+/*app.get('/ytmusic/download/artist/:artist/title/:title', async function (req, res) {
     const api = new YoutubeMusicApi()
     const info = await api.initalize();
 
@@ -182,54 +189,72 @@ app.get('/ytmusic/download/artist/:artist/title/:title', async function (req, re
         }
     })
     //fs.rm(filename);
-})
+})*/
 
-// http://localhost:3000/ytmusic/download/id/1l8G2ybbEpw/spotifyId/0tWYNvbtncD1lZ4iwDpdCc/spotifyAT/{accesstoken}
+// http://localhost:3000/ytmusic/download/id/1l8G2ybbEpw/spotifyId/0tWYNvbtncD1lZ4iwDpdCc/spotifyAT/{accessToken}}
 app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', async function (req, res) {
-    const api = new YoutubeMusicApi()
-    const info = await api.initalize();
-
     try {
-        spotifyApi.setAccessToken(req.params.accessToken)
-    } catch {}
+        const api = new YoutubeMusicApi()
+        const info = await api.initalize();
 
-    console.log(req.params.id, req.params.spotify)
+        try {
+            spotifyApi.setAccessToken(req.params.accessToken)
+        } catch {}
 
-    const filename = await downloadFile(req.params.id)
+        console.log(req.params.id, req.params.spotify)
 
-    const track = (await spotifyApi.getTracks([req.params.spotify], {
-        limit: 1
-    }))?.body?.tracks?.[0]
+        const filename = await downloadFile(req.params.id)
+        //const filename = `${__dirname}\\1l8G2ybbEpw.mp3`;
 
-    console.log(track)
-    console.log(track.album.images[0].url)
+        const track = (await spotifyApi.getTracks([req.params.spotify], {
+            limit: 1
+        }))?.body?.tracks?.[0]
 
-    const r = await request(track.album.images[0].url)
-    await r.pipe(fs.createWriteStream(`${__dirname}\\c-${req.params.id}.jpg`))
+        console.log(track.album.images[0].url)
 
-    const tags = {
-        title: track.name,
-        artist: track.artists.map(x => x.name).join(", "),
-        album: track.album.name,
-        APIC: `${__dirname}\\c-${req.params.id}.jpg`
-    }
+        const r = await request(track.album.images[0].url, {
+            resolveWithFullResponse: true,
+            encoding: null, // it also works with encoding: null
+            headers: {
+                "Content-type": "image/jpeg"
+            }
+        })
 
-    NodeID3.write(tags, filename)
-
-    res.sendFile(filename, function (err) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('Sent:', filename);
-            fs.unlink(filename, function(err) {
-                // log any error
-                if (err) {
-                    console.log(err);
-                }
-            });
-            fs.unlink(`${__dirname}\\c-${req.params.id}.jpg`, err => {})
+        const tags = {
+            title: track.name,
+            artist: track.artists.map(x => x.name).join(", "),
+            album: track.album.name,
+            image: {
+                mime: "image/jpeg",
+                type: {
+                    id: 3,
+                    name: "Front Cover"
+                },
+                description: "Cover",
+                imageBuffer: r.body
+            }
         }
-    })
+
+        NodeID3.write(tags, filename)
+
+        res.download(filename, `${tags.artist} - ${tags.title}.mp3`, function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('Sent:', filename);
+                fs.unlink(filename, function (err) {
+                    // log any error
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+                fs.unlink(`${__dirname}\\c-${req.params.id}.jpg`, err => {})
+            }
+        })
+    } catch {
+        res.status(500).send("an error occured, please try again later");
+        return 500
+    }
 })
 
 async function downloadFile(id) {
