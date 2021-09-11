@@ -220,6 +220,26 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', as
             }
         })
 
+        /*
+        tag.Tag.Comment = new SpotifyComment(featureCache[ft.Id], ft.Popularity, ft.Album.ReleaseDate).ToString();
+        tag.Tag.Title = ft.Name;
+        tag.Tag.Performers = getExportArtist(ft.Artists.Select(x => x.Name).ToArray());
+        tag.Tag.Album = ft.Album.Name;
+        tag.Tag.BeatsPerMinute = (uint)Math.Round(featureCache[ft.Id].Tempo);
+
+        SpotifyComment:
+        energy = (int)Math.Round(features.Energy * 100);
+        danceability = (int)Math.Round(features.Danceability * 100);
+        happiness = (int)Math.Round(features.Valence * 100);
+        loudness = (int)Math.Round(features.Loudness * 100);
+        accousticness = (int)Math.Round(features.Acousticness * 100);
+        instrumentalness = (int)Math.Round(features.Instrumentalness * 100);
+        liveness = (int)Math.Round(features.Liveness * 100);
+        speechiness = (int)Math.Round(features.Speechiness * 100);
+        key = features.Key.ToString();
+        this.popularity = popularity;
+        this.releaseDate = releaseDate;*/
+
         const tags = {
             title: track.name,
             artist: track.artists.map(x => x.name).join(", "),
@@ -251,8 +271,8 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', as
                 fs.unlink(`${__dirname}\\c-${req.params.id}.jpg`, err => {})
             }
         })
-    } catch {
-        res.status(500).send("an error occured, please try again later");
+    } catch (e) {
+        res.status(500).send(e);
         return 500
     }
 })
