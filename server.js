@@ -289,7 +289,7 @@ async function downloadFile(id) {
 
     console.log("downloaded!")
 
-    return __dirname + "\\" + id + ".mp3"
+    return __dirname + "/tmp/" + id + ".mp3"
 }
 
 app.use(express.static(__dirname + '/public'));
