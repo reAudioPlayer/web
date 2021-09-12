@@ -18,6 +18,7 @@
     <script type="text/javascript" src="/src/spotify.js"></script>
     <script type="text/javascript" src="/share/socket.js"></script>
     <script type="text/javascript" src="/share/share.js"></script>
+    <script type="text/javascript" src="/youtube-dl/youtube-dl.js"></script>
 </head>
 
 <body>
@@ -92,6 +93,16 @@ If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/s
                     <a href="/visualiser/v2/?code=1234" class="linked-title">Web-Streaming from your Audio Player</a><br>
                     <p>This feature is still in development, but you can try it out already!</p>
                 </div>
+
+                <div class="function">
+                    <a href="/youtube-dl/" class="linked-title">Youtube Downloader</a><br>
+                    <p>This feature is still in development, but you can try it out already!</p>
+                    <label for="code">Youtube Link:</label>
+                    <span contenteditable="true" id="yt" class="text-input"></span><br>
+                    <label for="code">Spotify Link:</label>
+                    <span contenteditable="true" id="sp" class="text-input"></span><br><br>
+                    <button onclick="download()" class="negative">Download</button>
+                </div>
             </div>
         </div>
     </div>
@@ -110,6 +121,16 @@ If that didn't work, [create an issue](https://github.com/reAudioPlayer-Apollo/s
     function setScrollbarWidth() {
         document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement
             .clientWidth) + "px")
+    }
+
+    function download() {
+        const yt = document.getElementById("yt")
+        const sp = document.getElementById("sp")
+
+        const yti = yt.innerText;
+        const spi = sp.innerText;
+
+        ytdl.download(yti, spi);
     }
 
     async function link() {
