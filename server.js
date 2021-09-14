@@ -210,7 +210,11 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', as
             limit: 1
         }))?.body?.tracks?.[0]
 
-        console.log(track.album.images[0].url)
+        const features = (await spotifyApi.getAudioFeaturesForTrack(track.id))?.body;
+
+        const genres = (await spotifyApi.getAlbum(track.album.id)).body.genres;
+
+        console.log(genres)
 
         const r = await request(track.album.images[0].url, {
             resolveWithFullResponse: true,
@@ -240,10 +244,30 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', as
         this.popularity = popularity;
         this.releaseDate = releaseDate;*/
 
+        function SpotifyComment(features, popularity, releaseDate)
+        {
+            return JSON.stringify({
+                energy: Math.round(features.energy * 100),
+                danceability: Math.round(features.danceability * 100),
+                happiness: Math.round(features.happiness * 100),
+                loudness: Math.round(features.loudness * 100),
+                accousticness: Math.round(features.accousticness * 100),
+                instrumentalness: Math.round(features.instrumentalness * 100),
+                liveness: Math.round(features.liveness * 100),
+                speechiness: Math.round(features.speechiness * 100),
+                key: features.key,
+                popularity,
+                releaseDate
+            })
+        }
+
         const tags = {
             title: track.name,
             artist: track.artists.map(x => x.name).join(", "),
             album: track.album.name,
+            bpm: Math.round(features.tempo),
+            comment: SpotifyComment(features, track.popularity, track.album.release_date),
+            genre: genres.join(", "),
             image: {
                 mime: "image/jpeg",
                 type: {
