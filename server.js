@@ -247,17 +247,17 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', as
         function SpotifyComment(features, popularity, releaseDate)
         {
             return JSON.stringify({
-                energy: Math.round(features.energy * 100),
-                danceability: Math.round(features.danceability * 100),
-                happiness: Math.round(features.happiness * 100),
-                loudness: Math.round(features.loudness * 100),
-                accousticness: Math.round(features.accousticness * 100),
-                instrumentalness: Math.round(features.instrumentalness * 100),
-                liveness: Math.round(features.liveness * 100),
-                speechiness: Math.round(features.speechiness * 100),
-                key: features.key,
-                popularity,
-                releaseDate
+                energy: Math.round(features.energy * 100) || 0,
+                danceability: Math.round(features.danceability * 100) || 0,
+                happiness: Math.round(features.valence * 100) || 0,
+                loudness: Math.round(features.loudness * 100) || 0,
+                acousticness: Math.round(features.acousticness * 100) || 0,
+                instrumentalness: Math.round(features.instrumentalness * 100) || 0,
+                liveness: Math.round(features.liveness * 100) || 0,
+                speechiness: Math.round(features.speechiness * 100) || 0,
+                key: features.key || 0,
+                popularity: popularity || 0,
+                releaseDate: releaseDate || ""
             })
         }
 
@@ -266,7 +266,7 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', as
             artist: track.artists.map(x => x.name).join(", "),
             album: track.album.name,
             bpm: Math.round(features.tempo),
-            comment: SpotifyComment(features, track.popularity, track.album.release_date),
+            comment: { "language": "eng", "text": SpotifyComment(features, track.popularity, track.album.release_date)},
             genre: genres.join(", "),
             image: {
                 mime: "image/jpeg",
@@ -278,6 +278,10 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', as
                 imageBuffer: r.body
             }
         }
+
+        console.log(tags)
+        console.log(features)
+        console.log(track.popularity)
 
         NodeID3.write(tags, filename)
 

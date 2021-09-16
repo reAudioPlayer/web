@@ -8,7 +8,7 @@ spotifyStart("spotify/", json => {
       release.images[0].url + "'>" +
       "<h4>" + release.name + "</h4>" +
       "<h5>" + release.artists.map(x => x.name).join(", ") + "</h5>" +
-      "<pre>Released on " + release["release_date"] + "</pre><pre>Because you follow " + release.reason + "</pre><audio controls src='/spotify/preview/album/" + release.id + "'></audio></div>"
+      "<pre>Released on " + release["release_date"] + "</pre><pre>Because you follow " + release.reason + "</pre><div class='centreflex'><span class='material-icons-outlined playPause' onclick=loadToAudioPlayer('/spotify/preview/album/" + release.id + "')>play_circle_filled</span></div></div>"
     library += line;
     jdata[i].keywords = `${release.artists.map(x => x.name).join(", ")} ${release.name} ${release.reason} ${release["release_date"]}`
   }

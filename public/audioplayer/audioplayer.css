@@ -39,6 +39,7 @@ reaudioplayer>.ui>.lowerUI>.ui-wrapper-centre {
     display: flex;
     justify-content: center;
     flex: 2;
+    align-items: center;
 }
 
 reaudioplayer>.ui>.lowerUI>.ui-wrapper-centre>input {
@@ -65,6 +66,8 @@ input[type="range"]:hover {
 p.note {
     font-size: 11px;
     font-family: 'Poppins', sans-serif;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 reaudioplayer>img.cover {
@@ -102,4 +105,8 @@ reaudioplayer>h5.artist {
 
 reaudioplayer>.ui {
     z-index: 0;
+}
+
+reaudioplayer>.ui>.upperUI>span, reaudioplayer>.ui>.lowerUI>.ui-wrapper-right>span {
+    color: white;
 }

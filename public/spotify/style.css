@@ -107,8 +107,6 @@ header {
     width: 100%;
     padding: 10px;
     margin-bottom: 5px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
 
     color: whitesmoke;
     font-family: "Poppins", sans-serif;
@@ -146,6 +144,9 @@ header {
     display: flex;
     flex-flow: row wrap;
     width: 100%;
+    max-height: 75vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .notgamerow {
@@ -262,6 +263,13 @@ pre {
     font-size: 11px;
 
     color: var(--font);
+}
+
+.material-icons-outlined.playPause {
+    margin: 0;
+    padding: 0;
+    font-size: 2rem;
+    color: white;
 }
 
 summary {
@@ -395,6 +403,8 @@ select option {
 .compact {
     flex: 1 1 calc(12.5% - 30px) !important;
     max-width: calc(12.5% - 8px);
+    display: flex;
+    flex-direction: column;
 }
 
 .compact.focus {
@@ -460,4 +470,12 @@ span.forselect {
     background: rgb(39, 39, 39);
     margin-top: 10px;
     margin-left: 5px;
+}
+
+.centreflex {
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    height: 100%;
+    margin-bottom: 5%;
 }
