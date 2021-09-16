@@ -71,8 +71,8 @@ p.note {
 }
 
 reaudioplayer>img.cover {
-    height: 80px;
-    width: 80px;
+    height: 73px;
+    width: 73px;
     border-radius: 20px;
     z-index: 1;
     position: absolute;
@@ -85,8 +85,8 @@ reaudioplayer>h4.title, reaudioplayer>h5.artist {
     width: 15%;
     z-index: 1;
     position: absolute;
-    top: 70;
-    left: 120;
+    top: 60;
+    left: 110;
     text-transform: uppercase;
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -97,7 +97,7 @@ reaudioplayer>h4.title, reaudioplayer>h5.artist {
 }
 
 reaudioplayer>h5.artist {
-    top: 90;
+    top: 80;
     font-size: .8rem;
     font-weight: lighter;
     text-transform: none;
