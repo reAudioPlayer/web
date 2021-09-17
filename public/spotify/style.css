@@ -423,27 +423,6 @@ span.forselect {
     color: var(--font);
 }
 
-/* width */
-::-webkit-scrollbar {
-    width: 3px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    border-radius: 3px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: var(--font);
-    border-radius: 3px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: var(--gradient-c1);
-}
-
 /* tooltips */
 [data-tooltip]:before {
     /* needed - do not touch */

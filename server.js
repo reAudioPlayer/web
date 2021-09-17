@@ -145,6 +145,11 @@ app.post('/spotify/releaseRadar', requiresAuth(), async function (req, res) {
     }
 });
 
+app.get('/spotify/preview/song/:id', requiresAuth(), async function (req, res) {
+    const data = await spotifyApi.getTrack(req.params.id)
+    res.redirect(data.body.preview_url)
+})
+
 app.get('/spotify/preview/album/:id', requiresAuth(), async function (req, res) {
     const data = await spotifyApi.getAlbumTracks(req.params.id, {
         limit: 1
@@ -156,9 +161,8 @@ app.post('/ytmusic/search', requiresAuth(), async function (req, res) {
     const api = new YoutubeMusicApi()
     const info = await api.initalize();
 
-    let result = await api.search(`${req.body.artist} ${req.body.title}`)
+    let result = await api.search(`${req.body.artist} ${req.body.title}`, "song")
 
-    result = result.content.filter(x => x.type == "song");
     res.json(result)
 })
 
@@ -191,97 +195,104 @@ app.post('/ytmusic/search', requiresAuth(), async function (req, res) {
     //fs.rm(filename);
 })*/
 
-// http://localhost:3000/ytmusic/download/id/1l8G2ybbEpw/spotifyId/0tWYNvbtncD1lZ4iwDpdCc/spotifyAT/{accessToken}}
-app.get('/ytmusic/download/id/:id/spotifyId/:spotify/spotifyAT/:accessToken', async function (req, res) {
+app.get('/spotify/metadata/album/:id/token/:token', requiresAuth(), async function (req, res) {
+    try
+    {
+        spotifyApi.setAccessToken(req.params.token)
+        const data = await spotifyApi.getAlbum(req.params.id);
+        res.json(data.body);
+    }
+    catch (e) {
+        res.status(500).send(e);
+        return 500
+    }
+})
+
+app.get('/spotify/metadata/song/:id/token/:token', requiresAuth(), async function (req, res) {
+    try
+    {
+        spotifyApi.setAccessToken(req.params.token)
+        const data = await getMetadataOnline(req.params.id);
+        res.json(data);
+    }
+    catch (e) {
+        res.status(500).send(e);
+        return 500
+    }
+})
+
+function SpotifyComment(features, track)
+{
+    return JSON.stringify({
+        energy: Math.round(features.energy * 100) || 0,
+        danceability: Math.round(features.danceability * 100) || 0,
+        happiness: Math.round(features.valence * 100) || 0,
+        loudness: Math.round(features.loudness * 100) || 0,
+        acousticness: Math.round(features.acousticness * 100) || 0,
+        instrumentalness: Math.round(features.instrumentalness * 100) || 0,
+        liveness: Math.round(features.liveness * 100) || 0,
+        speechiness: Math.round(features.speechiness * 100) || 0,
+        key: features.key || 0,
+        popularity: track.popularity || 0,
+        releaseDate: track.album.release_date || ""
+    })
+}
+
+async function getMetadataOnline(id)
+{
+    const track = (await spotifyApi.getTrack(id))?.body;
+
+    const features = (await spotifyApi.getAudioFeaturesForTrack(track.id))?.body;
+
+    const genres = (await spotifyApi.getAlbum(track.album.id))?.body?.genres;
+
+    const tags = {
+        title: track.name,
+        artist: track.artists.map(x => x.name).join(", "),
+        album: track.album.name,
+        bpm: Math.round(features.tempo),
+        comment: { "language": "eng", "text": SpotifyComment(features, track)},
+        genre: genres.join(", "),
+        cover: track.album.images[0].url
+    }
+
+    return tags;
+}
+
+async function getMetadataLocal(id)
+{
+    let tags = await getMetadataOnline(id);
+
+    const r = await request(tags.cover, {
+        resolveWithFullResponse: true,
+        encoding: null,
+        headers: {
+            "Content-type": "image/jpeg"
+        }
+    })
+
+    tags.image = {
+            mime: "image/jpeg",
+            type: {
+                id: 3,
+                name: "Front Cover"
+            },
+            description: "Cover",
+            imageBuffer: r.body
+    }
+
+    return tags;
+}
+
+app.get('/ytmusic/download/id/:id/spotifyId/:spotify/token/:token', async function (req, res) {
     try {
-        const api = new YoutubeMusicApi()
-        const info = await api.initalize();
-
-        try {
-            spotifyApi.setAccessToken(req.params.accessToken)
-        } catch {}
-
         console.log(req.params.id, req.params.spotify)
+        spotifyApi.setAccessToken(req.params.token)
 
         const filename = await downloadFile(req.params.id)
         //const filename = `${__dirname}\\1l8G2ybbEpw.mp3`;
 
-        const track = (await spotifyApi.getTracks([req.params.spotify], {
-            limit: 1
-        }))?.body?.tracks?.[0]
-
-        const features = (await spotifyApi.getAudioFeaturesForTrack(track.id))?.body;
-
-        const genres = (await spotifyApi.getAlbum(track.album.id)).body.genres;
-
-        console.log(genres)
-
-        const r = await request(track.album.images[0].url, {
-            resolveWithFullResponse: true,
-            encoding: null, // it also works with encoding: null
-            headers: {
-                "Content-type": "image/jpeg"
-            }
-        })
-
-        /*
-        tag.Tag.Comment = new SpotifyComment(featureCache[ft.Id], ft.Popularity, ft.Album.ReleaseDate).ToString();
-        tag.Tag.Title = ft.Name;
-        tag.Tag.Performers = getExportArtist(ft.Artists.Select(x => x.Name).ToArray());
-        tag.Tag.Album = ft.Album.Name;
-        tag.Tag.BeatsPerMinute = (uint)Math.Round(featureCache[ft.Id].Tempo);
-
-        SpotifyComment:
-        energy = (int)Math.Round(features.Energy * 100);
-        danceability = (int)Math.Round(features.Danceability * 100);
-        happiness = (int)Math.Round(features.Valence * 100);
-        loudness = (int)Math.Round(features.Loudness * 100);
-        accousticness = (int)Math.Round(features.Acousticness * 100);
-        instrumentalness = (int)Math.Round(features.Instrumentalness * 100);
-        liveness = (int)Math.Round(features.Liveness * 100);
-        speechiness = (int)Math.Round(features.Speechiness * 100);
-        key = features.Key.ToString();
-        this.popularity = popularity;
-        this.releaseDate = releaseDate;*/
-
-        function SpotifyComment(features, popularity, releaseDate)
-        {
-            return JSON.stringify({
-                energy: Math.round(features.energy * 100) || 0,
-                danceability: Math.round(features.danceability * 100) || 0,
-                happiness: Math.round(features.valence * 100) || 0,
-                loudness: Math.round(features.loudness * 100) || 0,
-                acousticness: Math.round(features.acousticness * 100) || 0,
-                instrumentalness: Math.round(features.instrumentalness * 100) || 0,
-                liveness: Math.round(features.liveness * 100) || 0,
-                speechiness: Math.round(features.speechiness * 100) || 0,
-                key: features.key || 0,
-                popularity: popularity || 0,
-                releaseDate: releaseDate || ""
-            })
-        }
-
-        const tags = {
-            title: track.name,
-            artist: track.artists.map(x => x.name).join(", "),
-            album: track.album.name,
-            bpm: Math.round(features.tempo),
-            comment: { "language": "eng", "text": SpotifyComment(features, track.popularity, track.album.release_date)},
-            genre: genres.join(", "),
-            image: {
-                mime: "image/jpeg",
-                type: {
-                    id: 3,
-                    name: "Front Cover"
-                },
-                description: "Cover",
-                imageBuffer: r.body
-            }
-        }
-
-        console.log(tags)
-        console.log(features)
-        console.log(track.popularity)
+        const tags = await getMetadataLocal(req.params.spotify);
 
         NodeID3.write(tags, filename)
 

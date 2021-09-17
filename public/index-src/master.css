@@ -23,6 +23,8 @@ html {
     color: var(--font-colour);
     font-family: var(--font-family);
     background: var(--main-gradient);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .hidden {
@@ -150,6 +152,7 @@ a:hover {
 
 .main>.body>.function>* {
     margin-left: 20px;
+    margin-right: 20px;
 }
 
 .main>.body>.function>.preview>.card {

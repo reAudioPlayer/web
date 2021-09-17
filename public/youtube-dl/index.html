@@ -11,10 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
     <link href="/index-src/master.css" type="text/css" rel="stylesheet" />
 
-    <link href="/dist/dropzone.css" type="text/css" rel="stylesheet" />
+    <link href="/index-src/scrollbars.css" type="text/css" rel="stylesheet" />
 
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/dist/dropzone.js"></script>
     <script type="text/javascript" src="/src/spotify.js"></script>
     <script type="text/javascript" src="/youtube-dl/youtube-dl.js"></script>
 </head>
@@ -47,13 +45,41 @@
                 </div>
             </div>
             <div class="body" id="body">
+                <button style="margin: 20px;margin-bottom: 5px;" id="btnDownload" onclick="download()"
+                    class="negative">Download</button>
+
                 <div class="function">
-                    <h3>Youtube Download</h3>
+                    <h3>Youtube Video</h3>
                     <label for="code">Youtube Link:</label>
-                    <span contenteditable="true" id="yt" class="text-input"></span><br>
+                    <span contenteditable="true" id="yt" class="text-input"
+                        oninput="updateYoutubePreview(innerText)"></span><br><br>
+                </div>
+                <div class="function">
+                    <h3>Spotify Song</h3>
                     <label for="code">Spotify Link:</label>
-                    <span contenteditable="true" id="sp" class="text-input"></span><br><br>
-                    <button onclick="download()" class="negative">Download</button>
+                    <span contenteditable="true" id="sp" class="text-input"
+                        oninput="updateSpotifyPreview(innerText)"></span><br><br>
+                </div>
+
+                <div class="function">
+                    <h3>Preview</h3>
+                    <div class="iframes">
+                        <iframe id="youtubePreviewFrame" src="" title="YouTube video player" frameborder="0"
+                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                        <iframe src="" id="spotifyPreviewFrame" height="380" frameBorder="0" allowtransparency="true"
+                            allow="encrypted-media"></iframe><br><br>
+                    </div>
+                </div>
+
+                <div class="function">
+                    <h3>Metadata Analyser</h3>
+                    <h4 class="maybe" id="title">Title</h4>
+                    <p id="title-sp"><b>Spotify:</b> Test S</p>
+                    <p id="title-yt"><b>Youtube:</b> Test Y</p>
+                    <h4 class="maybe" id="artist">Artist</h4>
+                    <p id="artist-sp"><b>Spotify:</b> Artist S</p>
+                    <p id="artist-yt"><b>Youtube:</b> Artist Y</p>
                 </div>
             </div>
         </div>
@@ -62,20 +88,143 @@
 
 </html>
 
-<script>
-    document.getElementById("code").innerText = makeid(6)
-    dropzoneInit();
-</script>
+<style>
+    .good {
+        color: #00c48b;
+    }
+
+    .bad {
+        color: #e85454;
+    }
+
+    .maybe {
+        color: #c7aa19;
+    }
+
+    #btnDownload {
+        width: calc(100vw - var(--scrollbar-width) - 40px);
+    }
+
+    iframe {
+        margin: 5px;
+        border-radius: 10px;
+    }
+
+    iframe#youtubePreviewFrame {
+        flex-grow: 0;
+        min-width: 50%;
+    }
+
+    iframe#spotifyPreviewFrame {
+        flex-grow: 0;
+    }
+
+    .iframes {
+        display: flex;
+        flex-direction: row;
+        align-content: stretch;
+        justify-content: space-evenly;
+    }
+
+    .body {
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 90vh;
+    }
+</style>
 
 <script>
+    setScrollbarWidth();
     setTimeout(() => setScrollbarWidth(), 5000);
+
+    async function updateYoutubePreview(id) {
+        id = ytdl.youtubeParser(id);
+        document.getElementById("youtubePreviewFrame").src = `https://www.youtube.com/embed/${id}`;
+
+        const data = await fetch(`https://noembed.com/embed?url=${encodeURI(`https://www.youtube.com/watch?v=${id}`)}`)
+        window.ytdata = await data.json();
+
+        compareMetadata();
+    }
+
+    async function updateSpotifyPreview(id) {
+        id = ytdl.spotifyParser(id);
+        document.getElementById("spotifyPreviewFrame").src = `https://open.spotify.com/embed/track/${id}`;
+
+        const res = await fetch(`/spotify/metadata/song/${id}/token/${window.accessToken}`)
+        window.spdata = await res.json();
+
+        compareMetadata();
+    }
+
+    function compareMetadata()
+    {
+        document.getElementById("artist-yt").innerHTML = `<b>Youtube:</b> ${ytdata?.author_name}`
+        document.getElementById("artist-sp").innerHTML = `<b>Spotify:</b> ${spdata?.artist}`
+
+        document.getElementById("title-yt").innerHTML = `<b>Youtube:</b> ${ytdata?.title}`
+        document.getElementById("title-sp").innerHTML = `<b>Spotify:</b> ${spdata?.title}`
+
+        if (!ytdata || !spdata)
+        {
+            return;
+        }
+
+        const titleEqual = ytdata.title == spdata.title;
+        const artistEqual = ytdata.author_name == spdata.artist;
+
+        if (artistEqual)
+        {
+            document.getElementById("artist").className = "good"
+        }
+        else
+        {
+            const titlesY = ytdata.title.toLowerCase().split(' ');
+
+            for (const title of titlesY)
+            {
+                if (spdata.title.toLowerCase().includes(title))
+                {
+                    document.getElementById("title").className = "maybe"
+                    break;
+                }
+                else
+                {
+                    document.getElementById("title").className = "bad";
+                }
+            }
+        }
+
+        if (titleEqual)
+        {
+            document.getElementById("title").className = "good"
+        }
+        else
+        {
+            const artistsY = ytdata.author_name.toLowerCase().split(' ');
+
+            for (const artist of artistsY)
+            {
+                if (spdata.artist.toLowerCase().includes(artist))
+                {
+                    document.getElementById("artist").className = "maybe"
+                    break;
+                }
+                else
+                {
+                    document.getElementById("artist").className = "bad";
+                }
+            }
+        }
+    }
 
     function setScrollbarWidth() {
         document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement
             .clientWidth) + "px")
     }
 
-    function download() {
+    async function download() {
+
         const yt = document.getElementById("yt")
         const sp = document.getElementById("sp")
 
