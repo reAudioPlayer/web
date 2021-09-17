@@ -173,9 +173,9 @@
         const titleEqual = ytdata.title == spdata.title;
         const artistEqual = ytdata.author_name == spdata.artist;
 
-        if (artistEqual)
+        if (titleEqual)
         {
-            document.getElementById("artist").className = "good"
+            document.getElementById("title").className = "good"
         }
         else
         {
@@ -195,9 +195,9 @@
             }
         }
 
-        if (titleEqual)
+        if (artistEqual)
         {
-            document.getElementById("title").className = "good"
+            document.getElementById("artist").className = "good"
         }
         else
         {
