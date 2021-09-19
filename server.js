@@ -73,7 +73,7 @@ server.listen(port, function () {
     console.log('Webserver running on Port %d', port);
 });
 
-dummyApi.init(server, "/dummy/ws");
+//dummyApi.init(server, "/dummy/ws");
 
 // ROUTES
 
