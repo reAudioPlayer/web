@@ -12,6 +12,8 @@ const fsp = require('fs').promises
 const NodeID3 = require('node-id3')
 const request = require('request-promise');
 
+const dummyApi = require("./api/dummy.js")
+
 // cors
 const cors = require("cors")
 
@@ -70,6 +72,8 @@ app.use(express.json())
 server.listen(port, function () {
     console.log('Webserver running on Port %d', port);
 });
+
+dummyApi.init(server, "/dummy/ws");
 
 // ROUTES
 

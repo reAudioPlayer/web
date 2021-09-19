@@ -28,28 +28,42 @@ class reVisualiserV2 {
         }
 
         async function getMetaData(file) {
-            const tags = await new Promise((resolve, reject) => {
-                const x = new jsmediatags.Reader(file)
-                    .read({
-                        onSuccess: (tag) => {
-                            console.log('Success!');
-                            resolve(tag);
-                        },
-                        onError: (error) => {
-                            console.log('Error');
-                            reject(error);
-                        }
-                    });
-            })
-            const {
-                data,
-                format
-            } = tags.tags.picture;
-            return {
-                cover: getCoverAsData(format, data),
-                title: tags.tags.title,
-                artist: tags.tags.artist,
-                album: tags.tags.album
+            try {
+                const tags = await new Promise((resolve, reject) => {
+                    const x = new jsmediatags.Reader(file)
+                        .read({
+                            onSuccess: (tag) => {
+                                console.log('Success!');
+                                resolve(tag);
+                            },
+                            onError: (error) => {
+                                console.log('Error');
+                                reject(error);
+                            }
+                        });
+                })
+                const y = {
+                    title: tags.tags.title,
+                    artist: tags.tags.artist,
+                    album: tags.tags.album
+                }
+
+                try {
+
+                    const {
+                        data,
+                        format
+                    } = tags.tags.picture;
+
+                    y.cover = getCoverAsData(format, data);
+                }
+                catch (e) { console.error(e) }
+
+                return y;
+            }
+            catch
+            {
+                return {title: "N/A", artist: "N/A", album: "N/A", cover: null}
             }
         }
 
