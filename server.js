@@ -125,12 +125,28 @@ app.get(["/settings", "/settings/", "/settings/index.html"], requiresAuth(), fun
 app.post('/spotify/releaseRadar', requiresAuth(), async function (req, res) {
     try {
         spotifyApi.setAccessToken(req.body.accessToken)
-        let artists = []
-        let data = await spotifyApi.getFollowedArtists({
-            limit: req.body.limit || 50
-        });
-        artists = data.body.artists.items
-        arts = artists.map(x => x.id)
+        let artists = [ ]
+
+        let data = await spotifyApi.getFollowedArtists({after: 0, limit: 50});
+        artists.push(...data.body.artists.items)
+
+        const total = data.body.artists.total
+
+        while (artists.length < total)
+        {
+            let data = await spotifyApi.getFollowedArtists({
+                after: artists.length
+            });
+            artists.push(...data.body.artists.items)
+        }
+
+        artists = artists.filter((obj, index, self) =>
+            index === self.findIndex((t) => (
+                t.id === obj.id
+            ))
+        )
+
+        let arts = artists.map(x => x.id)
         let releases = []
         for (let i = 0; i < arts.length; i++) {
             const artist = artists[i]
@@ -138,13 +154,14 @@ app.post('/spotify/releaseRadar', requiresAuth(), async function (req, res) {
                 limit: 10
             })
             const latestRelease = data.body.items.sort((a, b) => (a.release_date < b.release_date) ? 1 : ((b.release_date < a.release_date) ? -1 : 0))[0]
-            //console.log(artist.name + " - " + latestRelease.name)
+            //console.log(artist.name + " - " + latestRelease.name + " [" + i + "]")
             latestRelease.reason = artist.name
             releases.push(latestRelease)
         }
         releases = releases.sort((a, b) => (a.release_date < b.release_date) ? 1 : ((b.release_date < a.release_date) ? -1 : 0))
         res.json(releases)
     } catch (e) {
+        console.error(e)
         res.status(401).send("Oh uh, something went wrong.\n(" + JSON.stringify(e) + ")");
     }
 });

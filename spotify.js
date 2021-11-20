@@ -6,9 +6,9 @@ const redirectUri = 'http://reap.ml/callback/'
 
 // credentials are optional
 var spotifyApi = new SpotifyWebApi({
-  clientId,
-  clientSecret,
-  redirectUri
+    clientId,
+    clientSecret,
+    redirectUri
 });
 
 const scope = "user-follow-read playlist-modify-public"
@@ -18,19 +18,23 @@ const code = "AQBin95QPP92XdP4ODfsWHsgmbPTc8KozpBKXIPS66b0YQOR7E4DVaDNmVwRRWH3g5
 
 spotifyApi.setAccessToken("BQCSUfpGdySN55u-9xxSm621iyT0DXTxQ2GTjD8I3IXMDlrg7sv7dItfyiOPbHyxN1aDV6he6Uy37RtqWZ36xA9xEmOMMd48JO_MBUhltR5filzB9ZFPpxcPAQuPcz1utc0l93VcaWOSnjPVhL2MxJwiCkjq6f4pUZZC7lkLtXWii3DYj_nlqE1Z2g-TSVbsGrNRvA")
 
-spotifyApi.getFollowedArtists({ limit : 50 })
-.then(function(data) {
-    return data.body.artists.items.map(x => x.id)
-})
-.then(artists => {
-artists.forEach(artist => {
-    spotifyApi.getArtistAlbums(artist, { limit: 10 })
-        .then(function(data) {
-        const latestRelease = data.body.items.sort((a,b) => (a.release_date < b.release_date) ? 1 : ((b.release_date < a.release_date) ? -1 : 0))[0]
-        console.log(latestRelease.artists[0].name + " - " + latestRelease.name)
-        console.log(latestRelease)
-        }, function(err) {
-        console.log('Something went wrong!', err);
-        });
-})
-});
+spotifyApi.getFollowedArtists({
+        limit: 50
+    })
+    .then(function (data) {
+        return data.body.artists.items.map(x => x.id)
+    })
+    .then(artists => {
+        artists.forEach(artist => {
+            spotifyApi.getArtistAlbums(artist, {
+                    limit: 10
+                })
+                .then(function (data) {
+                    const latestRelease = data.body.items.sort((a, b) => (a.release_date < b.release_date) ? 1 : ((b.release_date < a.release_date) ? -1 : 0))[0]
+                    console.log(latestRelease.artists[0].name + " - " + latestRelease.name)
+                    console.log(latestRelease)
+                }, function (err) {
+                    console.log('Something went wrong!', err);
+                });
+        })
+    });
