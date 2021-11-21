@@ -288,3 +288,7 @@ div.previewCard {
 span.toclipboard:hover {
     cursor: pointer;
 }
+
+.root-link {
+    text-decoration: none;
+}
