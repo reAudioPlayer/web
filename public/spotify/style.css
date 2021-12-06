@@ -194,22 +194,6 @@ p {
     font-size: 14px;
 }
 
-/* Responsive layout - makes a two column-layout instead of four columns */
-@media screen and (max-width: 970px) {
-    .game {
-        flex: 1 1 calc(50% - 20px) !important;
-        max-width: calc(50% - 8px);
-    }
-}
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-    .game {
-        flex: 1 1 calc(100% - 10px) !important;
-        max-width: calc(100% - 8px);
-    }
-}
-
 .mobile {
     flex: 1 1 calc(50% - 20px) !important;
     max-width: calc(50% - 8px);
@@ -457,4 +441,27 @@ span.forselect {
     align-items: end;
     height: 100%;
     margin-bottom: 5%;
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 970px) {
+    .game {
+        flex: 1 1 calc(50% - 20px) !important;
+        max-width: calc(50% - 8px);
+    }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+    .game {
+        flex: 1 1 calc(100% - 10px) !important;
+        max-width: calc(100% - 8px);
+    }
+}
+
+pre {
+    text-overflow: ellipsis;
+    width: 90%;
+    height: 50%;
+    overflow: hidden;
 }
