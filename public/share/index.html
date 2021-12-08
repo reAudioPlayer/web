@@ -28,14 +28,32 @@
 
 <body>
     <div class="wrapper">
-        <div class="sidebar hidden">
-            <h2>Online Features</h2>
-            <a href="https://icons8.com/icon/7820/male-user">Male User icon by Icons8</a>
+        <div id="overlay" class="overlay hidden">
+            <div class="overlay-header">
+                <a class="root-link" href="/"> <h1>reAudioPlayer Apollo - Web</h1> </a>
+                <span onclick="closeOverlay()" class="material-icons-outlined">close</span>
+            </div>
+            <div class="link-wrapper">
+                <div class="function">
+                    <a href="/spotify">Release Radar</a><br>
+                </div>
+                <div class="function">
+                    <a href="/share">File Sharing</a><br>
+                </div>
+                <div class="function">
+                    <a href="/visualiser/v2">Streamer</a><br>
+                </div>
+                <div class="function">
+                    <a href="/youtube-dl">Youtube Downloader</a><br>
+                </div>
+                <a class="hidden" href="https://icons8.com/icon/7820/male-user">Male User icon by Icons8</a>
+            </div>
         </div>
+
         <div class="main">
             <div class="header">
                 <div class="title">
-                    <a class="root-link" href="/"><h1>reAudioPlayer Apollo - Web / Share</h1></a>
+                    <a class="root-link" onclick="openOverlay()" > <h1>reAudioPlayer Apollo - Web / Share</h1> </a>
                 </div>
                 <div class="user">
                     <div id="user-loggedIn" class="loggedIn">
@@ -76,6 +94,18 @@
 </body>
 
 </html>
+
+<script>
+    function openOverlay()
+    {
+        document.getElementById("overlay").classList.remove("hidden")
+    }
+    
+    function closeOverlay()
+    {
+        document.getElementById("overlay").classList.add("hidden")
+    }
+</script>
 
 <script>
     document.getElementById("code").innerText = makeid(6)
