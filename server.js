@@ -49,7 +49,7 @@ const config = {
     auth0Logout: true,
     secret: 'a long, randomly-generated string stored in env',
     baseURL,
-    clientID: process.env.AUTH0_CLIENT_ID, // hide!!!
+    clientID: process.env.AUTH0_CLIENT_ID || "", // hide!!!
     issuerBaseURL: 'https://dev-l3q9y5qp.us.auth0.com'
 };
 
@@ -283,8 +283,11 @@ async function getMetadataOnline(id)
 async function getMetadataLocal(id)
 {
     let tags = await getMetadataOnline(id);
+    return await createMetadataFromJson(tags);
+}
 
-    const r = await request(tags.cover, {
+async function createMetadataFromJson(jdata) {
+    const r = await request(jdata.cover, {
         resolveWithFullResponse: true,
         encoding: null,
         headers: {
@@ -292,7 +295,7 @@ async function getMetadataLocal(id)
         }
     })
 
-    tags.image = {
+    jdata.image = {
             mime: "image/jpeg",
             type: {
                 id: 3,
@@ -302,8 +305,41 @@ async function getMetadataLocal(id)
             imageBuffer: r.body
     }
 
-    return tags;
+    return jdata;
 }
+
+app.get("/one/download", async function(req, res) {
+    try {
+        const tags = JSON.parse(req.query.data)
+        const src = tags.source
+        delete tags.source
+        const id = src.split("/")[src.split("/").length - 1]
+        
+        const filename = await downloadFromAny(src)
+        const rtags = await createMetadataFromJson(tags)
+
+        NodeID3.write(rtags, filename)
+
+        res.download(filename, `${tags.artist} - ${tags.title}.mp3`, function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('Sent:', filename);
+                fs.unlink(filename, function (err) {
+                    // log any error
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+                fs.unlink(`${__dirname}\\c-${req.params.id}.jpg`, err => {})
+            }
+        })    
+    } catch (e) {
+        console.error(e)
+        res.status(500).send(e);
+        return 500
+    }
+})
 
 app.get('/ytmusic/download/id/:id/spotifyId/:spotify/token/:token', async function (req, res) {
     try {
@@ -338,7 +374,12 @@ app.get('/ytmusic/download/id/:id/spotifyId/:spotify/token/:token', async functi
 })
 
 async function downloadFile(id) {
-    await youtubedl('http://www.youtube.com/v/' + id, {
+    return await downloadFromAny('http://www.youtube.com/v/' + id)
+}
+
+async function downloadFromAny(url) {
+    const id = url.split("/")[url.split("/").length - 1]
+    await youtubedl(url, {
         continue: true,
         ignoreErrors: true,
         noOverwrites: true,
