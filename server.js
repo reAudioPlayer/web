@@ -310,12 +310,12 @@ async function createMetadataFromJson(jdata) {
 
 app.get("/one/download", async function(req, res) {
     try {
+        console.log(req.query.data, req.query.src)
         const tags = JSON.parse(req.query.data)
-        const src = tags.source
-        delete tags.source
+        const src = req.query.src
         const id = src.split("/")[src.split("/").length - 1]
         
-        const filename = await downloadFromAny(src)
+        const filename = (await downloadFromAny(src)).replace("?", "#")
         const rtags = await createMetadataFromJson(tags)
 
         NodeID3.write(rtags, filename)
