@@ -134,14 +134,7 @@ app.get('/user/get', async (req, res) => {
 });
 
 app.post('/user/set/data/:accessToken', async function (req, res) {
-    const to = req.query.redirect;
     const accessToken = req.params.accessToken;
-
-    if (!to)
-    {
-        res.status(400).send("no redirect");
-        return;
-    }
 
     if (!accessTokens[accessToken]) {
         res.status(401).send(false)
