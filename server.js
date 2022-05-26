@@ -12,6 +12,10 @@ const fsp = require('fs').promises
 const NodeID3 = require('node-id3')
 const request = require('request-promise');
 
+const Hashids = require('hashids')
+const hashids = new Hashids("reapApollo", 10)
+const hashidsRandom = new Hashids((new Date().toISOString()), 10)
+
 const dummyApi = require("./api/dummy.js")
 
 // cors
@@ -77,9 +81,49 @@ server.listen(port, function () {
 
 // ROUTES
 
+app.get('/user/get/redirect', requiresAuth(), async (req, res) => {
+    const to = req.query.redirect;
+
+    if (!to)
+    {
+        res.status(400).send("no redirect");
+        return;
+    }
+
+    if (!req.oidc.user) {
+        res.status(401).send(false)
+        return;
+    }
+
+    const accessToken = generateTempAccessToken(req.oidc.user)
+
+    res.redirect(`${to}${accessToken}`)
+});
+
+app.get('/user/get/:accessToken', async (req, res) => {
+    const accessToken = req.params.accessToken;
+
+    if (!accessTokens[accessToken]) {
+        res.status(401).send(false)
+        return;
+    }
+
+    const user = accessTokens[accessToken];
+    const data = await getUserData(user.email, user.sub);
+
+    res.json({
+        data,
+        accessToken,
+        user
+    })
+});
+
+const accessTokens = { }
+
 app.get('/user/get', async (req, res) => {
     if (req.oidc.user) {
         const data = await getUserData(req.oidc.user.email, req.oidc.user.sub);
+
         res.json({
             user: req.oidc.user,
             data
@@ -89,14 +133,33 @@ app.get('/user/get', async (req, res) => {
     }
 });
 
+app.post('/user/set/data/:accessToken', async function (req, res) {
+    const to = req.query.redirect;
+    const accessToken = req.params.accessToken;
+
+    if (!to)
+    {
+        res.status(400).send("no redirect");
+        return;
+    }
+
+    if (!accessTokens[accessToken]) {
+        res.status(401).send(false)
+        return;
+    }
+
+    const user = accessTokens[accessToken]
+    setData(user.email, user.sub, JSON.stringify(req.body))
+
+    res.send(req.body.data)
+})
+
 app.post('/user/set/data', requiresAuth(), async function (req, res) {
-    setData(req, req.body.data)
+    setDataFromRequest(req, req.body.data)
     res.send(req.body.data)
 })
 
 app.post('/user/set', requiresAuth(), async function (req, res) {
-    console.log(req)
-    console.log(req.body)
     const data = {
         youtubeApiKey: req.body.youtubeApiKey,
         spotifyApiId: req.body.spotifyApiId,
@@ -105,7 +168,7 @@ app.post('/user/set', requiresAuth(), async function (req, res) {
         igdbApiSecret: req.body.igdbApiSecret,
     }
 
-    setData(req, JSON.stringify(data))
+    setDataFromRequest(req, JSON.stringify(data))
 
     res.send(data)
 })
@@ -397,27 +460,29 @@ app.use(express.static(__dirname + '/public'));
 
 // FUNCTIONS
 
-async function setData(req, data) {
-    const entry = await userExists(req.oidc.user.email, req.oidc.user.sub)
+async function setDataFromRequest(req, data) {
+    await setData(req.oidc.user.email, req.oidc.user.sub, data)
+}
+
+async function setData(username, password, data) {
+    console.log(username, password, data)
+    const entry = await userExists(username, password)
 
     if (!entry) {
         await db.UserDb.create({
-            username: req.oidc.user.email,
-            password: req.oidc.user.sub,
-            data: data
+            username,
+            password,
+            data
         })
         return;
-    } else {
-
-        await db.UserDb.update({
-            data: data
-        }, {
-            where: {
-                username: req.oidc.user.email,
-                password: req.oidc.user.sub
-            }
-        })
     }
+
+    await db.UserDb.update({ data }, {
+        where: {
+            username,
+            password
+        }
+    })
 }
 
 async function userExists(username, password) {
@@ -430,6 +495,21 @@ async function userExists(username, password) {
     });
 
     return entries[0]
+}
+
+function generateTempAccessToken(user)
+{
+    for (const [key, value] of Object.entries(accessTokens)) {
+        if (value.email == user.email && value.sub == user.sub)
+        {
+            return key;
+        }
+    }
+
+    const key = hashidsRandom.encode(Object.values(accessTokens).length);
+    console.log(key);
+    accessTokens[key] = user
+    return key;
 }
 
 async function getUserData(username, password) {
@@ -447,7 +527,7 @@ async function getUserData(username, password) {
         const jdata = JSON.parse(entry.dataValues.data);
         return jdata
     } catch {
-        return data
+        return entry.dataValues.data
     }
 }
 

@@ -7,6 +7,7 @@
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "express-openid-connect": "^2.5.0",
+    "hashids": "^2.2.10",
     "node-id3": "^0.2.3",
     "node-url-shortener": "^1.1.11",
     "pg": "^8.6.0",
@@ -20,7 +21,6 @@
     "youtube-dl-exec": "^1.2.5",
     "youtube-music-api": "^1.0.6"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
