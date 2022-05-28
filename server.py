@@ -33,6 +33,7 @@ conn = psycopg2.connect(
     host= env.get("DATABASE_URL") or "localhost",
     database="apollo-gamelib",
     user="postgres",
+    host="localhost",
     password="fancyPassword")
 
 oauth = OAuth(app)
