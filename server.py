@@ -16,6 +16,8 @@ from flask import Flask, redirect, send_file, send_from_directory, session, url_
 
 import mimetypes
 
+from flask_cors import cross_origin
+
 from meta.releases import Releases
 mimetypes.init()
 mimetypes.types_map['.js'] = 'application/javascript; charset=utf-8'
@@ -120,6 +122,7 @@ def getAccessToken():
     return redirect(redirectTo.replace("<token>", token))
 
 @app.route("/user/<accessToken>", methods = ["GET", "POST"])
+@cross_origin()
 def updateUserData(accessToken: str):
     if not accessToken in __accessTokens:
         return Response(status = 401)
