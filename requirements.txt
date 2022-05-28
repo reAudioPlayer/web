@@ -7,5 +7,5 @@ psycopg2
 spotipy
 ytmusicapi
 sclib
-flas-cors>=3.0.10
+flask-cors>=3.0.10
 git+https://github.com/3jackdaws/soundcloud-lib.git
