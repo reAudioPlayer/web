@@ -131,7 +131,20 @@ def updateUserData(accessToken: str):
     if request.method == "GET":
         return prepareUserWithData(user)
 
-    nData = request.json
+    updateUserData(user, request.json)
+    return "success"
+
+@app.route("/user", methods = ["GET", "POST"])
+def getUser():
+    user = session.get("user")
+    if not user:
+        return Response("false", status = 401)
+    if request.method == "GET":
+        return prepareUserWithData(user)
+    updateUserData(user, request.json)
+    return "success"
+
+def updateUserData(user: dict, data: dict):
     name = user["userinfo"]["email"]
     pw = user["userinfo"]["sub"]
     query = f"\"username\" = '{name}' AND \"password\" = '{pw}'"
@@ -140,19 +153,9 @@ def updateUserData(accessToken: str):
         return string.replace("'", "''")
 
     with conn.cursor() as curs:
-        curs.execute('UPDATE "UserDbs" SET data = \'' + toSetter(json.dumps(nData)) + '\' WHERE ' + query)
+        curs.execute('UPDATE "UserDbs" SET data = \'' + toSetter(json.dumps(data)) + '\' WHERE ' + query)
 
     conn.commit()
-
-    return __accessTokens[accessToken]
-
-@app.route("/user")
-def getUser():
-    user = session.get("user")
-    if not user:
-        return Response("false", status = 401)
-    return prepareUserWithData(user)
-    
 
 def prepareUserWithData(user: dict):
     name = user["userinfo"]["email"]

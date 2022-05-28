@@ -13,6 +13,7 @@ import Body from "./Body.vue";
 <script>
 
 import themes from "./assets/themes.json";
+import "v-contextmenu/dist/themes/dark.css";
 
 const LOCAL_STORAGE_KEY = "theme" // change it to whatever you like
 
@@ -78,6 +79,84 @@ export default {
     }
 }
 </script>
+
+<!-- Popups -->
+<style lang="scss">
+    .modal-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #0000;
+    }
+
+    .modal-content {
+        position: relative;
+        width: 40%;
+        max-height: 70vh;
+        padding: 16px;
+        overflow: auto;
+        background: var(--font-contrast);
+        border-radius: 10px;
+        color: var(--font-colour);
+    }
+
+    .modal-close {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 32px;
+        height: 32px;
+        font-size: 1.5em;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: var(--font-darker);
+    }
+
+    h3 {
+        margin: 0;
+    }
+
+    .modal-close:hover {
+        color: var(--font-colour);
+    }
+
+    .material-symbols-rounded {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 100,
+        'GRAD' -25,
+        'opsz' 48
+    }
+</style>
+
+<style lang="scss">
+    .v-contextmenu {
+        background: var(--font-contrast) !important;
+        font-family: var(--font-family) !important;
+        border: 1px solid var(--hover-1);
+        /*box-shadow: 2px 2px 8px 0 var(--hover-4) !important;
+  --webkit-box-shadow: 2px 2px 8px 0 var(--hover-4) !important;*/
+        box-shadow: none;
+        --webkit-box-shadow: none;
+        color: var(--font-colour) !important;
+    }
+
+    .v-contextmenu-divider {
+        border-color: var(--border);
+    }
+
+    .v-contextmenu-item {
+        color: var(--font-colour) !important;
+        margin: 5px;
+        padding: 10px 22px 10px 15px;
+        border-radius: 5px;
+    }
+
+    .v-contextmenu-item--hover {
+        background: var(--hover-1) !important;
+    }
+</style>
 
 <style lang="scss">
 .material-symbols-rounded {

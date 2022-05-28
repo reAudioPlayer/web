@@ -1,5 +1,6 @@
 <template>
     <div class="playlist">
+        <EditPlaylist @close="updatePlaylist" :playlistName="playlistName" :playlistDescription="playlistDescription" ref="editPlaylistPopup" :userData="userData" />
         <fixed-playlist-header @loadPlaylist="loadPlaylist" ref="fixedHeading" :class="{ 'hidden': fixedHeaderHidden }" :title="playlistName" />
         <div class="padding-20 playlisteditor" @click="editPlaylist" v-observe-visibility="headerVisibilityChanged">
             <h7>Playlist</h7>
@@ -14,7 +15,7 @@
                 <grid-header />
                 <hr>
                 <div class="playlistEntries">
-                    <playlist-entry v-for="(element, index) in playlist" @download="download" :key="index" @requestUpdate="updatePlaylist" :index="playlist.findIndex(x => x.source == element.source)" :source="element.source" :playing="element.playing" :id="element.id" :title="element.title" :album="element.album" :artist="element.artist" :cover="element.cover" :favourite="element.favourite" :duration="element.duration" />
+                    <playlist-entry v-for="(element, index) in playlist" @download="download" :key="index" @requestUpdate="updatePlaylist" :userData="userData" :index="playlist.findIndex(x => x.source == element.source)" :source="element.source" :playing="element.playing" :id="element.id" :title="element.title" :album="element.album" :artist="element.artist" :cover="element.cover" :favourite="element.favourite" :duration="element.duration" />
                 </div>
             </div>
         </div>
@@ -25,6 +26,7 @@
     import FixedPlaylistHeader from '../components/playlist/FixedPlaylistHeader.vue'
     import GridHeader from '../components/playlist/GridHeader.vue'
     import PlaylistEntry from '../components/playlist/PlaylistEntry.vue'
+    import EditPlaylist from '../components/popups/EditPlaylist.vue'
 
     import Hashids from 'hashids'
     const hashids = new Hashids("reapOne.playlist", 22)
@@ -33,7 +35,8 @@
         components: {
             PlaylistEntry,
             FixedPlaylistHeader,
-            GridHeader
+            GridHeader,
+            EditPlaylist
         },
         name: 'Playlist',
         props: {
@@ -152,7 +155,10 @@
                         type: "playlist"
                     })
                 })
-            }
+            },
+            editPlaylist() {
+                this.$refs.editPlaylistPopup.showModal = true
+            },
         },
         watch:{
             $route (){

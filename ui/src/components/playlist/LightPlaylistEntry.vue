@@ -21,7 +21,7 @@ a<template>
 <script>
     import SongCtx from '../ContextMenus/SongCtx.vue'
     import Marquee from '../Marquee.vue'
-    import EditSong from '../Popups/EditSong.vue'
+    import EditSong from '../popups/EditSong.vue'
 
     import Hashids from 'hashids'
     const hashids = new Hashids("reapOne.track", 22)

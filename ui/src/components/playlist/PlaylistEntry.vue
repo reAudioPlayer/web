@@ -1,4 +1,6 @@
 <template>
+<SongCtx @download="download" @addto="addToPlaylist" @remove="remove" @update="update" @like="favourited = !favourited" :isAutoPlaylist="isAutoPlaylist" :liked="favourited" ref="ctxMenu">
+    <EditSong :userData="userData" @close="updatePlaylist" ref="editSongPopup" :cover="cover" :id="id" :title="title" :album="album" :artist="artist" :source="source" />
     <div @dblclick="() => { playAt(); onselect() }" @click="onselect" @mouseover="displayPlay" @mouseleave="displayId" class="playlistEntry"
         :class="{ 'selected': highlighted }">
         <span @click="playAt" ref="idOrPlay" :class="{ 'playing': playing }" class="id">{{index + 1}}</span>
@@ -22,10 +24,13 @@
         <span class="duration">{{duration}}</span>
         <span @click="showCtxMenu" class="more material-symbols-rounded" :class="{ 'hidden': !highlighted }">more_horiz</span>
     </div>
+</SongCtx>
 </template>
 
 <script>
+    import SongCtx from '../contextMenus/SongCtx.vue'
     import Marquee from '../Marquee.vue'
+    import EditSong from '../popups/EditSong.vue'
 
     import Hashids from 'hashids'
     const hashidsTrack = new Hashids("reapOne.track", 22)
@@ -34,7 +39,9 @@
     export default {
         name: 'PlaylistEntry',
         components: {
-            Marquee
+            SongCtx,
+            Marquee,
+            EditSong
         },
         props: {
             index: Number,
@@ -67,7 +74,8 @@
             playing: {
                 type: Boolean,
                 default: false
-            }
+            },
+            userData: Object
         },
         data() {
             return {
