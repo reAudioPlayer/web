@@ -104,6 +104,10 @@ export default {
 }
 </style>
 
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+</style>
+
 <style lang="scss">
     @import "./assets/css/scrollbars.css";
 
