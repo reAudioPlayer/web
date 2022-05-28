@@ -1,0 +1,36 @@
+<template>
+    <div class="body" :class="{ 'noSidebar': noSidebar }">
+        <router-view :authorised="authorised" :userData="userData" />
+    </div>
+</template>
+
+<script>
+export default {
+    name: "Body",
+    props: {
+        noSidebar: Boolean,
+        authorised: Boolean,
+        userData: Object
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+    $mobileWidth: 950px;
+
+    div.body {
+        flex-grow: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-width: calc(100vw - var(--sidebar-width));
+        max-height: 100vh;
+
+        &.noSidebar {
+            max-width: 100vw;
+        }
+
+        @media screen and (max-width: $mobileWidth) {
+            max-width: 100vw;
+        }
+    }
+</style>
