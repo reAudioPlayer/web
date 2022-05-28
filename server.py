@@ -30,7 +30,7 @@ app.secret_key = env.get("APP_SECRET_KEY")
 ranHashids = Hashids(str(time()), 10)
 
 conn = psycopg2.connect(
-    host="127.0.0.1",
+    host= env.get("DATABASE_URL") or "localhost",
     database="apollo-gamelib",
     user="postgres",
     password="fancyPassword")
