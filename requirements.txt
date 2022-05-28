@@ -7,3 +7,4 @@ psycopg2
 spotipy
 ytmusicapi
 sclib
+git+https://github.com/3jackdaws/soundcloud-lib.git
