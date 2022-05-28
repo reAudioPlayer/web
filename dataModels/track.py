@@ -1,5 +1,4 @@
 from __future__ import annotations
-from os import stat
 import spotipy
 from ytmusicapi import YTMusic
 

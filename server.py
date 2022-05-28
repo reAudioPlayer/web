@@ -6,7 +6,7 @@ from time import time
 import psycopg2
 from spotipy import Spotify
 from os import environ as env
-from urllib.parse import quote_plus, urlencode
+from urllib.parse import quote_plus, urlencode, urlparse
 
 from hashids import Hashids
 
@@ -29,12 +29,30 @@ app.secret_key = env.get("APP_SECRET_KEY")
 
 ranHashids = Hashids(str(time()), 10)
 
-conn = psycopg2.connect(
-    host= env.get("DATABASE_URL") or "localhost",
-    database="apollo-gamelib",
-    user="postgres",
-    host="localhost",
-    password="fancyPassword")
+conn = None
+
+if env.get('DATABASE_URL'):
+    url = urlparse(env.get('DATABASE_URL'))
+    dbname = url.path[1:]
+    user = url.username
+    password = url.password
+    host = url.hostname
+    port = url.port
+
+    conn = psycopg2.connect(
+                dbname=dbname,
+                user=user,
+                password=password,
+                host=host,
+                port=port
+                )
+
+else:
+    conn = psycopg2.connect(
+        host= "localhost",
+        database="apollo-gamelib",
+        user="postgres",
+        password="fancyPassword")
 
 oauth = OAuth(app)
 
