@@ -4,9 +4,10 @@
             <span id="loadPlaylist" @click="this.$emit('loadPlaylist')" class="material-symbols-rounded">play_circle_filled</span>
             <h3>{{title}}</h3>
         </div>
-        <grid-header class="padding-20 darkback" />
+        <grid-header class="padding-20 darkback hideIfMobile" />
     </div>
 </template>
+
 <script>
 import GridHeader from './GridHeader.vue'
 
@@ -21,7 +22,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    $mobileWidth: 950px;
+
     .padding-20 {
         padding-left: 20px;
         padding-right: 20px;
@@ -70,5 +73,9 @@ export default {
         z-index: 100;
         height: 80px;
         padding-bottom: 10px;
+
+        @media screen and (max-width: $mobileWidth) {
+            left: 0;
+        }
     }
 </style>

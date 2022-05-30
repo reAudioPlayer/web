@@ -1,4 +1,5 @@
 <template>
+<div>
     <div class="wrapper">
         <router-link class="link" to="/collection/playlists">
             <div class="collection">
@@ -11,6 +12,10 @@
             </div>
         </router-link>
     </div>
+    <div class="mobileMenu showIfMobile">
+        <span @click="toggleFullSidebar" class="material-symbols-rounded">menu</span>
+    </div>
+</div>
 </template>
 
 <script>

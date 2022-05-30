@@ -1,7 +1,7 @@
 <template>
 <SongCtx @download="download" @addto="addToPlaylist" @remove="remove" @update="update" @like="favourited = !favourited" :isAutoPlaylist="isAutoPlaylist" :liked="favourited" ref="ctxMenu">
     <EditSong :userData="userData" @close="updatePlaylist" ref="editSongPopup" :cover="cover" :id="id" :title="title" :album="album" :artist="artist" :source="source" />
-    <div @dblclick="() => { playAt(); onselect() }" @click="onselect" @mouseover="displayPlay" @mouseleave="displayId" class="playlistEntry"
+    <div @dblclick="() => { playAt(); onselect() }" @click="onselect" @mouseover="displayPlay" @mouseleave="displayId" class="playlistEntry hideIfMobile"
         :class="{ 'selected': highlighted }">
         <span @click="playAt" ref="idOrPlay" :class="{ 'playing': playing }" class="id">{{index + 1}}</span>
         <div class="track">
@@ -23,6 +23,24 @@
         <span @click="favourited = !favourited" class="favourite material-symbols-rounded" :class="{ 'showfavourite': favourited || highlighted, 'active': favourited }">favorite</span>
         <span class="duration">{{duration}}</span>
         <span @click="showCtxMenu" class="more material-symbols-rounded" :class="{ 'hidden': !highlighted }">more_horiz</span>
+    </div>
+    <div class="mobilePlaylist showIfMobile">
+        <div class="track">
+            <img :src="cover || '/assets/img/music_placeholder.png'">
+            <div class="trackwrapper">
+                <span class="title" :class="{ 'playing': playing }">
+                    <router-link class="linkOnHover" :to="`/track/${trackId}`">
+                        <Marquee :text="title" />
+                    </router-link>
+                </span>
+                <span class="artist" :class="{ 'playing': playing }">
+                    <router-link class="linkOnHover" :to="`/search/${artist}`">
+                        <Marquee :text="artist" />
+                    </router-link>
+                </span>
+            </div>
+        </div>
+        <span @click="showCtxMenu" class="more material-symbols-rounded">more_horiz</span>
     </div>
 </SongCtx>
 </template>
@@ -167,6 +185,33 @@
                 })
             },
             setFavourite() {
+
+                for (const playlist of this.userData.data.playlists)
+                {
+                    for (const song of playlist.songs)
+                    {
+                        if (song.id == this.id)
+                        {
+                            if (song.favourite == this.favourited ? 1 : 0) {
+                                return;
+                            }
+
+                            song.favourite = this.favourited ? 1 : 0
+                        }
+                    }
+                }
+
+                fetch("/user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(this.userData.data)
+                }).then(x => {
+                    console.log(x)
+                    this.$emit("close")
+                })
+                return;
                 fetch("/api/updateSong", {
                     method: "POST",
                     body: JSON.stringify({
@@ -196,6 +241,30 @@
 </script>
 
 <style scoped lang="scss">
+
+    div.mobilePlaylist {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .track {
+            flex: 1;
+        }
+
+        .trackwrapper {
+            flex-grow: 1;
+
+            .title {
+                font-size: .8em;
+            }
+
+            .artist {
+                color: var(--font-darker);
+                font-size: .7em;
+            }
+        }
+    }
+
     div.playlistEntry {
         padding-top: 7px;
         padding-bottom: 7px;
@@ -268,11 +337,16 @@
         align-items: center;
     }
 
-    .title {
+    .title, .artist {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
         color: var(--font-colour);
+        width: 100%;
+        
+        &.artist {
+            color: var(--font-darker);
+        }
     }
 
     .title.playing, .id.playing {
@@ -314,6 +388,7 @@
         max-width: 35vw;
         margin-right: 100px;
         align-items: flex-start;
+        width: 100%;
     }
 
     .duration {

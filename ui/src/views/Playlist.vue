@@ -1,5 +1,6 @@
 <template>
     <div class="playlist">
+        <AddSong @close="updatePlaylist" ref="addSongPopup" :userData="userData" />
         <EditPlaylist @close="updatePlaylist" :playlistName="playlistName" :playlistDescription="playlistDescription" ref="editPlaylistPopup" :userData="userData" />
         <fixed-playlist-header @loadPlaylist="loadPlaylist" ref="fixedHeading" :class="{ 'hidden': fixedHeaderHidden }" :title="playlistName" />
         <div class="padding-20 playlisteditor" @click="editPlaylist" v-observe-visibility="headerVisibilityChanged">
@@ -7,12 +8,15 @@
             <h1>{{playlistName}}</h1>
             <h5>{{playlistDescription}}</h5>
         </div>
+        <div class="mobileMenu showIfMobile">
+            <span @click="() => $emit('toggleFullSidebar')" class="material-symbols-rounded">menu</span>
+        </div>
         <hr>
         <div class="padding-20">
             <span id="loadPlaylist" @click="loadPlaylist" class="material-symbols-rounded">play_circle_filled</span>
             <span id="addToPlaylist" @click="addToPlaylist" class="material-symbols-rounded">add_circle</span>
             <div class="grid">
-                <grid-header />
+                <grid-header class="hideIfMobile" />
                 <hr>
                 <div class="playlistEntries">
                     <playlist-entry v-for="(element, index) in playlist" @download="download" :key="index" @requestUpdate="updatePlaylist" :userData="userData" :index="playlist.findIndex(x => x.source == element.source)" :source="element.source" :playing="element.playing" :id="element.id" :title="element.title" :album="element.album" :artist="element.artist" :cover="element.cover" :favourite="element.favourite" :duration="element.duration" />
@@ -27,6 +31,7 @@
     import GridHeader from '../components/playlist/GridHeader.vue'
     import PlaylistEntry from '../components/playlist/PlaylistEntry.vue'
     import EditPlaylist from '../components/popups/EditPlaylist.vue'
+    import AddSong from "../components/popups/AddSong.vue"
 
     import Hashids from 'hashids'
     const hashids = new Hashids("reapOne.playlist", 22)
@@ -36,6 +41,7 @@
             PlaylistEntry,
             FixedPlaylistHeader,
             GridHeader,
+            AddSong,
             EditPlaylist
         },
         name: 'Playlist',
@@ -68,7 +74,7 @@
 
             const jdata = this.userData?.data?.playlists?.[Number(this.getId())]
             document.title = `${this.playlistName} - reAudioPlayer One`;
-            console.log(jdata.songs)
+            //console.log(jdata.songs)
             const playlist = jdata.songs
             const playlistName = jdata.name
             const playlistDescription = jdata.description
@@ -111,7 +117,7 @@
 
                 const jdata = this.userData?.data?.playlists?.[Number(this.getId())]
                 document.title = `${this.playlistName} - reAudioPlayer One`;
-                console.log(jdata.songs)
+                //console.log(jdata.songs)
                 this.playlist = jdata.songs
                 this.playlistName = jdata.name
                 this.playlistDescription = jdata.description
@@ -155,6 +161,9 @@
                         type: "playlist"
                     })
                 })
+            },
+            addToPlaylist() {
+                this.$refs.addSongPopup.showModal = true
             },
             editPlaylist() {
                 this.$refs.editPlaylistPopup.showModal = true

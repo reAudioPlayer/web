@@ -1,6 +1,6 @@
 <template>
-    <div class="body" :class="{ 'noSidebar': noSidebar }">
-        <router-view :authorised="authorised" :userData="userData" />
+    <div class="body">
+        <router-view @toggleFullSidebar="() => $emit('toggleFullSidebar')" :authorised="authorised" :userData="userData" />
     </div>
 </template>
 

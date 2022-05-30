@@ -1,19 +1,24 @@
 <template>
     <div class="playlist">
-        <fixed-playlist-header @click="loadPlaylist" ref="fixedHeading" :class="{ 'hidden': fixedHeaderHidden }" :title="playlistName" />
-        <div class="padding-20" v-observe-visibility="headerVisibilityChanged">
+        <AddSong @close="updatePlaylist" ref="addSongPopup" :userData="userData" />
+        <EditPlaylist @close="updatePlaylist" :playlistName="playlistName" :playlistDescription="playlistDescription" ref="editPlaylistPopup" :userData="userData" />
+        <fixed-playlist-header @loadPlaylist="loadPlaylist" ref="fixedHeading" :class="{ 'hidden': fixedHeaderHidden }" :title="playlistName" />
+        <div class="padding-20 playlisteditor" @click="editPlaylist" v-observe-visibility="headerVisibilityChanged">
             <h7>Playlist</h7>
-            <h1>{{playlistName}}</h1>
-            <h5>My Description</h5>
+            <h1>Liked Songs</h1>
+        </div>
+        <div class="mobileMenu showIfMobile">
+            <span @click="() => $emit('toggleFullSidebar')" class="material-symbols-rounded">menu</span>
         </div>
         <hr>
         <div class="padding-20">
-            <span id="loadPlaylist" @click="loadPlaylist" class="material-icons-outlined">play_circle_filled</span>
+            <span id="loadPlaylist" @click="loadPlaylist" class="material-symbols-rounded">play_circle_filled</span>
+            <span id="addToPlaylist" @click="addToPlaylist" class="material-symbols-rounded">add_circle</span>
             <div class="grid">
-                <grid-header />
+                <grid-header class="hideIfMobile" />
                 <hr>
                 <div class="playlistEntries">
-                    <playlist-entry v-for="(element, index) in playlist" :key="index" :index="index" :source="element.source" :id="element.id" :title="element.title" :playing="element.playing" :album="element.album" :artist="element.artist" :cover="element.cover" :favourite="element.favourite" :duration="element.duration" />
+                    <playlist-entry v-for="(element, index) in likedTracks" @download="download" :key="index" @requestUpdate="updatePlaylist" :userData="userData" :index="likedTracks.findIndex(x => x.source == element.source)" :source="element.source" :playing="element.playing" :id="element.id" :title="element.title" :album="element.album" :artist="element.artist" :cover="element.cover" :favourite="element.favourite" :duration="element.duration" />
                 </div>
             </div>
         </div>
@@ -24,23 +29,43 @@
     import FixedPlaylistHeader from '@/components/playlist/FixedPlaylistHeader.vue'
     import GridHeader from '@/components/playlist/GridHeader.vue'
     import PlaylistEntry from '@/components/playlist/PlaylistEntry.vue'
+    import EditPlaylist from '@/components/popups/EditPlaylist.vue'
+    import AddSong from "@/components/popups/AddSong.vue"
+
+    import Hashids from 'hashids'
+    const hashids = new Hashids("reapOne.playlist", 22)
 
     export default {
         components: {
             PlaylistEntry,
             FixedPlaylistHeader,
-            GridHeader
+            GridHeader,
+            AddSong,
+            EditPlaylist
         },
-        name: 'Tracks',
-        data() {
-            this.updateTracks()
+        name: 'LikedSongs',
+        props: {
+            authorised: Boolean,
+            userData: Object
+        },
+        data() {            
             return {
-                fixedHeaderHidden: true,
-                playlist: [],
-                playlistName: "N/A"
+                fixedHeaderHidden: true
+            }
+        },        
+        computed: {
+            rawPlaylists() {
+                return this.userData?.data?.playlists || [ ];
+            },
+            likedTracks() {
+                console.log(this.rawPlaylists)
+                return this.rawPlaylists.map(x => x.songs).flat().filter(x => x.favourite == 1);
             }
         },
         methods: {
+            headerVisibilityChanged(a) {
+                this.fixedHeaderHidden = a
+            },
             updateData(jdata) {
                 if (jdata.path == "player.song")
                 {
@@ -51,32 +76,16 @@
                         entry.playing = entry.title == title;
                     }
                 }
-            },
-            headerVisibilityChanged(a) {
-                this.fixedHeaderHidden = a
-            },
-            updateTracks() {
-                fetch("/api/collection/tracks")
-                    .then(x => x.json()).then(jdata => {
-                        this.playlist = jdata.songs
-                        this.playlistName = jdata.name
-                        console.log(this.playlist)
-                        //this.connect()
-                    })
-            },
-            loadPlaylist() {
-                fetch("/api/loadPlaylist", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        type: "collection"
-                    })
-                })
             }
         }
     }
 </script>
 
 <style scoped>
+    .playlisteditor:hover {
+        cursor: pointer;
+    }
+
     .playlistEntries {
         display: flex;
         flex-direction: column;
@@ -121,5 +130,10 @@
 
     .hidden {
         display: none !important;
+    }
+
+    h5 {
+        color: var(--font-darker);
+        font-weight: normal;
     }
 </style>

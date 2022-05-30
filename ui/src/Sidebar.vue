@@ -1,10 +1,13 @@
 <template>
-    <div class="sidebar">
+    <div class="sidebar" :class=" { 'showDespiteMobile': show } ">
         <div class="static">
             <div class="collapseSidebar" :class=" { 'minimised': minimised } ">
                 <h2 v-if="!minimised" @click="onLogoClick">reAudioPlayer Web</h2>
                 <span @click="minimised = !minimised"
                     class="hideIfMobile clickSymbol material-symbols-rounded">{{ minimised ? "chevron_right" : "chevron_left" }}</span>
+            </div>
+            <div class="mobileMenu showIfMobile">
+                <span @click="toggleFullSidebar" class="material-symbols-rounded">menu_open</span>
             </div>
             <nav-entry :minimised="minimised" href="/" icon="home" name="Home" />
             <nav-entry :minimised="minimised" href="/preferences" icon="settings" name="Settings" />
@@ -46,6 +49,7 @@
             NavEntry
         },
         props: {
+            show: Boolean,
             expandCover: Boolean,
             authorised: Boolean,
             userData: Object
@@ -81,12 +85,17 @@
                     this.cover = jdata?.data?.cover || "/assets/img/music_placeholder.png"
                     return;
                 }
-            }
+            },
+            toggleFullSidebar() {
+                this.$emit("toggleFullSidebar")
+            },
         }
     }
 </script>
 
 <style scoped lang="scss">
+    $mobileWidth: 950px;
+
 
     a.userData {
         padding: 10px 0 10px 10px;
@@ -186,6 +195,19 @@
         height: 100%;
         z-index: 1;
         justify-content: space-between;
+
+        @media screen and (max-width: $mobileWidth) {
+            display: none;
+        }
+
+        &.showDespiteMobile {
+            display: flex !important;
+            width: 100%;
+
+            h2 {
+                text-align: center;
+            }
+        }
     }
 
     h2:hover {

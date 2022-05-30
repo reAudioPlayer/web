@@ -5,8 +5,8 @@ import Body from "./Body.vue";
 
 <template>
 <div class="appRoot">
-    <Sidebar :authorised="authorised" :userData="userData" />
-    <Body :authorised="authorised" :userData="userData" />
+    <Sidebar @toggleFullSidebar="fullSidebar = !fullSidebar" :authorised="authorised" :userData="userData" :show="fullSidebar" />
+    <Body @toggleFullSidebar="fullSidebar = !fullSidebar" :authorised="authorised" :userData="userData" v-if="!fullSidebar" />
 </div>
 </template>
 
@@ -73,6 +73,7 @@ export default {
     },
     data() {
         return {
+            fullSidebar: false,
             userData: { },
             authorised: false
         }

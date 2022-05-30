@@ -1,7 +1,7 @@
 <template>
     <div class="preferences">
         <div class="mobileMenu showIfMobile">
-            <span @click="toggleFullSidebar" class="material-icons-outlined">menu</span>
+            <span @click="toggleFullSidebar" class="material-symbols-rounded">menu</span>
         </div>
         <full-shelf heading="Themes" :key="themeSelected">
             <theme @selected="updateThemes" v-for="(theme, index) in themes" :key="index"

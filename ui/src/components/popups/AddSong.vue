@@ -5,7 +5,7 @@
                 <div class="header">
                     <h3>Add song</h3>
                     <button class="modal-close" @click="showModal = false">
-                        <span class="material-icons-round">
+                        <span class="material-symbols-rounded">
                             close
                         </span>
                     </button>
@@ -14,7 +14,7 @@
                 <FindSources ref="findSources" :title="title" :artist="artist">
                     <div class="content">
                         <input @change="loadMetadata" type="text" ref="source">
-                        <span class="material-icons-round more" ref="sourceMore" @click="opencontextmenu">more_vert</span>
+                        <span class="material-symbols-rounded more" ref="sourceMore" @click="opencontextmenu">more_vert</span>
                     </div>
                 </FindSources>
                 <h4>Title</h4>
@@ -51,6 +51,9 @@
         name: "AddSong",
         components: {
             FindSources
+        },
+        props: {
+            userData: Object
         },
         data() {
             return {
@@ -100,23 +103,27 @@
             },
             add() {
                 this.showModal = false
-                console.log("fetch")
-                fetch("/api/add", {
+                this.userData.data.playlists[this.getId()].songs.push({
+                    source: this.$refs.source.value,
+                    title: this.title,
+                    artist: this.artist,
+                    album: this.$refs.album.value,
+                    cover: this.cover
+                })
+
+                fetch("/user", {
                     method: "POST",
-                    body: JSON.stringify({
-                        id: this.getId(),
-                        source: this.$refs.source.value,
-                        title: this.title,
-                        artist: this.artist,
-                        album: this.$refs.album.value,
-                        cover: this.cover
-                    })
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(this.userData.data)
                 }).then(x => {
                     console.log(x)
                     this.$emit("close")
                 })
             },
             loadMetadata() {
+                return;
                 fetch("/api/metadata", {
                         method: "POST",
                         body: JSON.stringify({
