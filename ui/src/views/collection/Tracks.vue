@@ -1,8 +1,6 @@
 <template>
     <div class="playlist">
-        <AddSong @close="updatePlaylist" ref="addSongPopup" :userData="userData" />
-        <EditPlaylist @close="updatePlaylist" :playlistName="playlistName" :playlistDescription="playlistDescription" ref="editPlaylistPopup" :userData="userData" />
-        <fixed-playlist-header @loadPlaylist="loadPlaylist" ref="fixedHeading" :class="{ 'hidden': fixedHeaderHidden }" :title="playlistName" />
+        <fixed-playlist-header @loadPlaylist="loadPlaylist" ref="fixedHeading" :class="{ 'hidden': fixedHeaderHidden }" title="Liked Songs" />
         <div class="padding-20 playlisteditor" @click="editPlaylist" v-observe-visibility="headerVisibilityChanged">
             <h7>Playlist</h7>
             <h1>Liked Songs</h1>
@@ -13,7 +11,6 @@
         <hr>
         <div class="padding-20">
             <span id="loadPlaylist" @click="loadPlaylist" class="material-symbols-rounded">play_circle_filled</span>
-            <span id="addToPlaylist" @click="addToPlaylist" class="material-symbols-rounded">add_circle</span>
             <div class="grid">
                 <grid-header class="hideIfMobile" />
                 <hr>

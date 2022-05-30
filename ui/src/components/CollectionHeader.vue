@@ -13,7 +13,7 @@
         </router-link>
     </div>
     <div class="mobileMenu showIfMobile">
-        <span @click="toggleFullSidebar" class="material-symbols-rounded">menu</span>
+        <span @click="() => $emit('toggleFullSidebar')" class="material-symbols-rounded">menu</span>
     </div>
 </div>
 </template>
