@@ -73,10 +73,10 @@
             }*/
 
             const jdata = this.userData?.data?.playlists?.[Number(this.getId())]
-            document.title = `${this.playlistName} - reAudioPlayer One`;
             const playlist = jdata?.songs || []
             const playlistName = jdata?.name || "N/A"
             const playlistDescription = jdata?.description || ""
+            document.title = `${playlistName} - reAudioPlayer One`;
             
             return {
                 fixedHeaderHidden: true,
@@ -104,11 +104,10 @@
                 }
 
                 const jdata = this.userData?.data?.playlists?.[Number(this.getId())]
-                document.title = `${this.playlistName} - reAudioPlayer One`;
-                //console.log(jdata.songs)
                 this.playlist = jdata?.songs || [ ]
                 this.playlistName = jdata?.name || "N/A"
                 this.playlistDescription = jdata?.description || ""
+                document.title = `${this.playlistName} - reAudioPlayer One`;
             },
             onPlaylistRearrange(type) {
                 const moved = type.moved
