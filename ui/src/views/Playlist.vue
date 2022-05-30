@@ -74,10 +74,9 @@
 
             const jdata = this.userData?.data?.playlists?.[Number(this.getId())]
             document.title = `${this.playlistName} - reAudioPlayer One`;
-            //console.log(jdata.songs)
-            const playlist = jdata.songs
-            const playlistName = jdata.name
-            const playlistDescription = jdata.description
+            const playlist = jdata?.songs || []
+            const playlistName = jdata?.name || "N/A"
+            const playlistDescription = jdata?.description || ""
             
             return {
                 fixedHeaderHidden: true,
@@ -104,23 +103,12 @@
                     return;
                 }
 
-                /*if (this.$route.params.id == "create")
-                {
-                    fetch("/api/playlist/create")
-                        .then(x => x.text()).then(y => {
-                            const link = hashids.encode(y);
-                            console.log(link)
-                            this.$router.push(link)
-                        })
-                    return
-                }*/
-
                 const jdata = this.userData?.data?.playlists?.[Number(this.getId())]
                 document.title = `${this.playlistName} - reAudioPlayer One`;
                 //console.log(jdata.songs)
-                this.playlist = jdata.songs
-                this.playlistName = jdata.name
-                this.playlistDescription = jdata.description
+                this.playlist = jdata?.songs || [ ]
+                this.playlistName = jdata?.name || "N/A"
+                this.playlistDescription = jdata?.description || ""
             },
             onPlaylistRearrange(type) {
                 const moved = type.moved
@@ -172,6 +160,9 @@
         watch:{
             $route (){
                 this.updatePlaylist()
+            },
+            userData() {
+                this.updatePlaylist();
             }
         }
     }
