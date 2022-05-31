@@ -1,7 +1,7 @@
 <template>
     <div class="fixedPlaylistHeader">
         <div class="upperWrapper">
-            <span id="loadPlaylist" @click="this.$emit('loadPlaylist')" class="material-symbols-rounded">play_circle_filled</span>
+            <span id="loadPlaylist" @click="this.$emit('loadPlaylist')" class="material-symbols-rounded hideIfMobile">play_circle_filled</span>
             <h3>{{title}}</h3>
         </div>
         <grid-header class="padding-20 darkback hideIfMobile" />
@@ -42,6 +42,10 @@ export default {
         display: flex;
         flex-direction: row;
         background: var(--accent-dark);
+
+        @media screen and (max-width: $mobileWidth) {
+            justify-content: center;
+        }
     }
 
     #loadPlaylist {
@@ -61,6 +65,10 @@ export default {
         display: inline;
         margin: 0;
         margin-left: 10px;
+
+        @media screen and (max-width: $mobileWidth) {
+            font-size: 1em;
+        }
     }
 
     .fixedPlaylistHeader {
