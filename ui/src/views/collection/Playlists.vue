@@ -1,6 +1,6 @@
 <template>
     <div class="padding-20">
-        <CollectionHeader />
+        <CollectionHeader @toggleFullSidebar="() => $emit('toggleFullSidebar')" />
         <div class="playlists">
             <full-shelf heading="Playlists">
                 <playlist-item-big v-if="likedTracks?.length" title="Liked Songs" :description="`${likedTracks?.length} liked Songs`" href="/collection/tracks" />

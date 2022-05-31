@@ -1,12 +1,12 @@
-import{_ as i,o as a,c as s,a as o,p as c,b as l,l as u}from"./index.d85ccaea.js";const d={name:"Home",methods:{toggleFullSidebar(){console.log("hey"),this.$emit("toggleFullSidebar")}}},h=e=>(c("data-v-5cbbde6e"),e=e(),l(),e),p={class:"home"},y=h(()=>o("h2",null," Privacy Policy ",-1)),m={class:"mobileMenu showIfMobile"},f=u(`<pre data-v-5cbbde6e><i data-v-5cbbde6e><p class="muted" data-v-5cbbde6e>Last updated 31 May, 2022</p></i>\r
+import{_ as i,o as a,c as s,a as o,p as c,b as l,l as u}from"./index.ce547255.js";const d={name:"Home",methods:{toggleFullSidebar(){console.log("hey"),this.$emit("toggleFullSidebar")}}},h=e=>(c("data-v-f1b6258c"),e=e(),l(),e),p={class:"home"},y=h(()=>o("h2",null," Privacy Policy ",-1)),f={class:"mobileMenu showIfMobile"},m=u(`<pre data-v-f1b6258c><i data-v-f1b6258c><p class="muted" data-v-f1b6258c>Last updated 31 May, 2022</p></i>\r
 \r
-This privacy notice for reAudioPlayer (<b data-v-5cbbde6e>&#39;Company&#39;</b>, <b data-v-5cbbde6e>&#39;we&#39;</b>, <b data-v-5cbbde6e>&#39;us&#39;</b>, or <b data-v-5cbbde6e>&#39;our&#39;</b>), describes how and why we might collect, store, use, and/or share (<b data-v-5cbbde6e>&#39;process&#39;</b>) your information when you use our services (&#39;Services&#39;), such as when you:\r
-Visit our website at <a href="https://eu-apollo.herokuapp.com/" data-v-5cbbde6e>https://eu-apollo.herokuapp.com/</a>, or any website of ours that links to this privacy notice\r
+This privacy notice for reAudioPlayer (<b data-v-f1b6258c>&#39;Company&#39;</b>, <b data-v-f1b6258c>&#39;we&#39;</b>, <b data-v-f1b6258c>&#39;us&#39;</b>, or <b data-v-f1b6258c>&#39;our&#39;</b>), describes how and why we might collect, store, use, and/or share (<b data-v-f1b6258c>&#39;process&#39;</b>) your information when you use our services (&#39;Services&#39;), such as when you:\r
+Visit our website at <a href="https://eu-apollo.herokuapp.com/" data-v-f1b6258c>https://eu-apollo.herokuapp.com/</a>, or any website of ours that links to this privacy notice\r
 Engage with us in other related ways, including any sales, marketing, or events\r
-<b data-v-5cbbde6e>Questions or concerns?</b> Reading this privacy notice will help you understand your privacy rights and choices. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at <a href="https://github.com/reAudioPlayer-Apollo/server" data-v-5cbbde6e>https://github.com/reAudioPlayer-Apollo/server</a>.\r
+<b data-v-f1b6258c>Questions or concerns?</b> Reading this privacy notice will help you understand your privacy rights and choices. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at <a href="https://github.com/reAudioPlayer-Apollo/server" data-v-f1b6258c>https://github.com/reAudioPlayer-Apollo/server</a>.\r
 \r
 \r
-<h3 data-v-5cbbde6e>SUMMARY OF KEY POINTS</h3>\r
+<h3 data-v-f1b6258c>SUMMARY OF KEY POINTS</h3>\r
 \r
 This summary provides key points from our privacy notice, but you can find out more details about any of these topics by clicking the link following each key point or by using our table of contents below to find the section you are looking for. You can also click here to go directly to our table of contents.\r
 \r
@@ -20,7 +20,7 @@ What are your rights? Depending on where you are located geographically, the app
 How do I exercise my rights? The easiest way to exercise your rights is by filling out our data subject request form available here: https://eu-apollo.herokuapp.com/, or by contacting us. We will consider and act upon any request in accordance with applicable data protection laws.\r
 Want to learn more about what reAudioPlayer does with any information we collect? Click here to review the notice in full.\r
 \r
-<h3 data-v-5cbbde6e>TABLE OF CONTENTS</h3>\r
+<h3 data-v-f1b6258c>TABLE OF CONTENTS</h3>\r
 1. WHAT INFORMATION DO WE COLLECT?\r
 2. HOW DO WE PROCESS YOUR INFORMATION?\r
 3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR PERSONAL INFORMATION?\r
@@ -309,4 +309,4 @@ Switzerland\r
 14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?\r
 \r
 Based on the applicable laws of your country, you may have the right to request access to the personal information we collect from you, change that information, or delete it in some circumstances. To request to review, update, or delete your personal information, please visit: https://eu-apollo.herokuapp.com/.\r
-        </pre>`,1);function w(e,r,v,g,b,n){return a(),s("div",p,[y,o("div",m,[o("span",{onClick:r[0]||(r[0]=(...t)=>n.toggleFullSidebar&&n.toggleFullSidebar(...t)),class:"material-symbols-rounded"},"menu")]),f])}var I=i(d,[["render",w],["__scopeId","data-v-5cbbde6e"]]);export{I as default};
+        </pre>`,1);function w(e,r,v,g,b,n){return a(),s("div",p,[y,o("div",f,[o("span",{onClick:r[0]||(r[0]=(...t)=>n.toggleFullSidebar&&n.toggleFullSidebar(...t)),class:"material-symbols-rounded"},"menu")]),m])}var I=i(d,[["render",w],["__scopeId","data-v-f1b6258c"]]);export{I as default};

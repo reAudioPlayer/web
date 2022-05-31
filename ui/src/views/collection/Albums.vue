@@ -1,6 +1,6 @@
 <template>
     <div class="padding-20">
-        <CollectionHeader />
+        <CollectionHeader @toggleFullSidebar="() => $emit('toggleFullSidebar')" />
         <div class="albums">
             Albums
         </div>

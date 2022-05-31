@@ -378,7 +378,11 @@ export default {
 
         pre {
             font-family: var(--font-family);
-            max-width: 100%
+            max-width: 100%;
+
+            @media screen and (max-width: $mobileWidth) {
+                font-size: .5em;
+            }
         }
     }
 </style>

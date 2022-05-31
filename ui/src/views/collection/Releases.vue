@@ -1,6 +1,6 @@
 <template>
     <div class="padding-20">
-        <CollectionHeader />
+        <CollectionHeader @toggleFullSidebar="() => $emit('toggleFullSidebar')" />
         <div class="releases">
             <full-shelf v-if="outSoon.length" heading="Out Soon">
                 <item-big v-for="element in outSoon" :key="element.url" :releaseDate="element.releaseDate" :cover="element.cover" :href="element.url" :artist="element.artists.join(', ')" :title="element.title" />

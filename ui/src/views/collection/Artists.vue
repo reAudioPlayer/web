@@ -1,6 +1,6 @@
 <template>
     <div class="padding-20">
-        <CollectionHeader />
+        <CollectionHeader @toggleFullSidebar="() => $emit('toggleFullSidebar')" />
         <div class="artists">
             <full-shelf heading="Following on Spotify">
                 <artist-item v-for="(element, index) in spotifyArtists" :key="index" :cover="element.cover"
