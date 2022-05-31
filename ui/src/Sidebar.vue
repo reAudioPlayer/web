@@ -14,6 +14,7 @@
             <nav-entry :minimised="minimised" href="/collection/playlists" icon="library_music" name="Your Library"
                 :hasChildSites="true" parentHref="/collection" />
             <br>
+            <nav-entry :minimised="minimised" href="/about/privacy" icon="policy" name="Privacy" />
             <nav-entry v-if="false" :minimised="minimised" href="/download" icon="download_for_offline" name="Download" />
             <br v-if="showNewsTab || showSportsTab">
             <nav-entry :minimised="minimised" v-if="showNewsTab && false" href="/news" icon="newspaper" name="News"

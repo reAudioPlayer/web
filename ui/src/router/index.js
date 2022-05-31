@@ -39,6 +39,12 @@ const router = createRouter({
         meta: {
             title: "Playlist - reAudioPlayer One"
         }
+    }, {
+        path: '/about/privacy',
+        component: () => import("@/views/Privacy.vue"),
+        meta: {
+            title: "Privacy - reAudioPlayer One"
+        }
     }]
 })
 

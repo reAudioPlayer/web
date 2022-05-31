@@ -253,6 +253,7 @@
 
         .trackwrapper {
             flex-grow: 1;
+            max-width: 68vw;
 
             .title {
                 font-size: .8em;
@@ -330,11 +331,12 @@
     }
 
     .track {
-        width: 40vw;
+        width: 50%;
         margin-left: 10px;
         display: flex;
         flex-direction: row;
         align-items: center;
+        flex-shrink: 0;
     }
 
     .title, .artist {
@@ -385,10 +387,9 @@
     .trackwrapper {
         display: flex;
         flex-direction: column;
-        max-width: 35vw;
         margin-right: 100px;
         align-items: flex-start;
-        width: 100%;
+        width: calc(100% - 60px);
     }
 
     .duration {

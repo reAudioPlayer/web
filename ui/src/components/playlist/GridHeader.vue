@@ -29,7 +29,7 @@ export default {
     }
 
     .gridHeader>.title {
-        width: 40vw;
+        width: 50%;
         margin-left: 10px;
     }
 

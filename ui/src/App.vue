@@ -163,7 +163,7 @@ export default {
 .material-symbols-rounded {
     font-variation-settings:
     'FILL' 0,
-    'wght' 100,
+    'wght' 300,
     'GRAD' -25,
     'opsz' 48
 }
