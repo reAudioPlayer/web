@@ -19,6 +19,9 @@ import mimetypes
 from flask_cors import cross_origin
 
 from meta.releases import Releases
+from meta.metadata import Metadata
+from dataModels.track import SpotifyTrack
+
 mimetypes.init()
 mimetypes.types_map['.js'] = 'application/javascript; charset=utf-8'
 
@@ -97,6 +100,14 @@ def logout():
         )
     )
 
+@app.route("/spotify/album", methods = ["POST"])
+def spotifyAlbum():
+    token = request.json.get("accessToken")
+    spotify = Spotify(token)
+    tracks = SpotifyTrack.FromAlbum(spotify, request.json.get("albumId"))
+    metadatas = [ Metadata(spotify, track.url) for track in tracks ]    
+    return jsonify([ metadata.toDict() for metadata in metadatas ])
+
 @app.route("/spotify/releaseRadar", methods = ["POST"])
 def releases():
     token = request.json.get("accessToken")
@@ -143,6 +154,8 @@ def getUser():
         return prepareUserWithData(user)
     updateUserData(user, request.json)
     return "success"
+
+##
 
 def updateUserData(user: dict, data: dict):
     name = user["userinfo"]["email"]

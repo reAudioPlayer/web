@@ -3,13 +3,13 @@
         <CollectionHeader @toggleFullSidebar="() => $emit('toggleFullSidebar')" />
         <div class="releases">
             <full-shelf v-if="outSoon.length" heading="Out Soon">
-                <item-big v-for="element in outSoon" :key="element.url" :releaseDate="element.releaseDate" :cover="element.cover" :href="element.url" :artist="element.artists.join(', ')" :title="element.title" />
+                <item-big v-for="element in outSoon" :key="element.url" :userData="userData" :releaseDate="element.releaseDate" :cover="element.cover" :href="element.url" :artist="element.artists.join(', ')" :title="element.title" />
             </full-shelf>
             <full-shelf v-if="outNow.length" heading="Out Now">
-                <ItemBig v-for="element in outNow" :key="element.url" :releaseDate="element.releaseDate" :cover="element.cover" :href="element.url" :artist="element.artists.join(', ')" :title="element.title" />
+                <ItemBig v-for="element in outNow" :key="element.url" :userData="userData" :releaseDate="element.releaseDate" :cover="element.cover" :href="element.url" :artist="element.artists.join(', ')" :title="element.title" />
             </full-shelf>
             <full-shelf v-if="outAlready.length" heading="Releases">
-                <Item v-for="element in outAlready" :key="element.url" :releaseDate="element.releaseDate" :cover="element.cover" :href="element.url" :artist="element.artists.join(', ')" :title="element.title" />
+                <Item v-for="element in outAlready" :key="element.url" :userData="userData" :releaseDate="element.releaseDate" :cover="element.cover" :href="element.url" :artist="element.artists.join(', ')" :title="element.title" />
             </full-shelf>
         </div>
     </div>
@@ -59,10 +59,20 @@ import CollectionHeader from '@/components/CollectionHeader.vue'
         },
         mounted() {
             const cacheName = "apollo.releaseCache"
+            const cache = window.localStorage.getItem(cacheName);
 
-            if (window.localStorage.getItem(cacheName))
+            if (!window.location.hash && this.userData.data?.spotifyApiId && this.userData.data?.spotifyApiSecret)
             {
-                this.load(JSON.parse(window.localStorage.getItem(cacheName)));
+                const redirectUri = window.location.href
+                const scope = "user-follow-read playlist-modify-public"
+
+                window.location.href = `https://accounts.spotify.com/authorize?client_id=${this.userData.data.spotifyApiId}&redirect_uri=${redirectUri.replace("#", "%23")}&scope=${scope}&response_type=token&state=123`
+                return;
+            }
+
+            if (cache && (new Date() - new Date(JSON.parse(cache).requested)) < 30 * 60 * 1000)
+            {
+                this.load(JSON.parse(cache).data);  
             }
             else if (window.location.hash)
             {
@@ -76,17 +86,12 @@ import CollectionHeader from '@/components/CollectionHeader.vue'
                     })
                 })  .then(x => x.json())
                     .then(jdata => {
-                        window.localStorage.setItem(cacheName, JSON.stringify(jdata))
-                        window.setTimeout(() => window.localStorage.removeItem(cacheName), 30 * 60 * 1000);
+                        window.localStorage.setItem(cacheName, JSON.stringify({
+                            requested: new Date(),
+                            data: jdata
+                        }))
                         this.load(jdata);
                     })
-            }
-            else if (this.userData.data?.spotifyApiId && this.userData.data?.spotifyApiSecret)
-            {
-                const redirectUri = window.location.href
-                const scope = "user-follow-read playlist-modify-public"
-
-                window.location.href = `https://accounts.spotify.com/authorize?client_id=${this.userData.data.spotifyApiId}&redirect_uri=${redirectUri.replace("#", "%23")}&scope=${scope}&response_type=token&state=123`
             }
         }
     }

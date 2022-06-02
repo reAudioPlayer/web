@@ -17,7 +17,7 @@
         </div>
         <hr>
         <div class="padding-20">
-            <span id="loadPlaylist" @click="loadPlaylist" class="material-symbols-rounded">play_circle_filled</span>
+            <span id="loadPlaylist" @click="loadPlaylist" class="material-symbols-rounded">play_circle</span>
             <span id="addToPlaylist" @click="addToPlaylist" class="material-symbols-rounded">add_circle</span>
             <div class="grid">
                 <grid-header class="hideIfMobile" />

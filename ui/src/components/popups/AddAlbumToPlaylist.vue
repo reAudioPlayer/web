@@ -6,7 +6,7 @@
                 <div class="header">
                     <h3>Add album</h3>
                     <button class="modal-close" @click="close">
-                        <span class="material-icons-round">
+                        <span class="material-symbols-rounded">
                             close
                         </span>
                     </button>
@@ -21,7 +21,7 @@
                     <FindSources ref="findSources" :title="title" :artist="artist">
                         <div class="content">
                             <input type="text" v-model="dSource" ref="source">
-                            <span class="material-icons-round more" ref="sourceMore"
+                            <span class="material-symbols-rounded more" ref="sourceMore"
                                 @click="opencontextmenu">more_vert</span>
                         </div>
                     </FindSources>
@@ -52,7 +52,7 @@
                         v-observe-visibility="headerVisibilityChanged">
                         <img class="cover" :src="cover" />
                         <div class="details">
-                            <div class="detailswrapper"><h7>Album</h7><span class="material-icons-round share" @click="share">share</span></div>
+                            <div class="detailswrapper"><h7>Album</h7><span class="material-symbols-rounded share" @click="share">share</span></div>
                             <h1>{{title}}</h1>
                             <h5>{{artist}}</h5>
                         </div>
@@ -72,31 +72,36 @@
     </div>
 </template>
 <script>
-    import AlbumEntry from '../Album/AlbumEntry.vue';
-    import AlbumHeader from '../Album/AlbumHeader.vue';
-    import FindSources from '../ContextMenus/FindSources.vue'
+    import AlbumEntry from '@/components/album/AlbumEntry.vue';
+    import AlbumHeader from '@/components/album/AlbumHeader.vue';
+    import FindSources from '@/components/contextMenus/FindSources.vue'
     export default {
         name: "AddAlbumToPlaylist",
         components: {
             FindSources,
             AlbumEntry,
-                AlbumHeader
+            AlbumHeader
         },
         props: {
             cover: String,
             artist: String,
             title: String,
             href: String,
-            id: String
+            id: String,
+            userData: Object
         },
         data() {
             return {
                 showModal: false,
-                playlists: [],
                 selectedPlaylist: -1,
                 playlist: [],
                 editSong: false
             }
+        },
+        computed: {
+            playlists() {
+                return (this.userData?.data?.playlists || [ ]).map(x => x?.name);
+            },
         },
         methods: {
             share() {
@@ -105,23 +110,6 @@
             close() {
                 this.showModal = false
                 this.$emit("close")
-            },
-            loadMetadata() {
-                fetch("/api/metadata", {
-                        method: "POST",
-                        body: JSON.stringify({
-                            url: this.$refs.source.value
-                        })
-                    })
-                    .then(x => x.json())
-                    .then(jdata => {
-                        console.log(jdata)
-                        this.dTitle = jdata.title
-                        this.$refs.album.value = jdata.album
-                        this.dArtist = jdata.artists.join(", ")
-                        this.dCover = jdata.cover
-                        this.$refs.source.value = jdata.src
-                    })
             },
             openInNewTab() {
                 window.open(this.cover ? this.cover : '/assets/img/music_placeholder.png')
@@ -143,44 +131,33 @@
                     return
                 }
 
-                fetch("/api/add", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        id: id,
-                        source: track.src,
-                        title: track.title,
-                        artist: track.artists.join(", "),
-                        album: this.title,
-                        cover: this.cover
-                    })
-                }).then(x => {
-                    if (x.status == 200) {
-                        track.added = true
-                    }
+                this.userData.data.playlists[id].songs.push({
+                    source: track.src,
+                    title: track.title,
+                    artist: track.artists.join(", "),
+                    album: this.title,
+                    cover: this.cover,
+                    duration: "-1:59"
                 })
+
+                track.added = true;
             }
         },
         watch: {
-            dSource() {
-                this.loadMetadata()
-            },
             showModal() {
                 if (!this.showModal)
                 {
                     return
                 }
 
-                fetch("/api/playlists")
-                    .then(x => x.json())
-                    .then(jdata => {
-                        this.playlists.length = 0;
-                        this.playlists.push(...jdata)
-                    })
-
-                fetch("/api/spotify/album", {
+                fetch("/spotify/album", {
                         method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
                         body: JSON.stringify({
-                            "albumId": this.id
+                            accessToken: window.location.hash.split("=")[1],
+                            albumId: this.id
                         })
                     }).then(x => x.json())
                     .then(jdata => {

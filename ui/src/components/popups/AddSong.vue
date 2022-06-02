@@ -108,7 +108,8 @@
                     title: this.title,
                     artist: this.artist,
                     album: this.$refs.album.value,
-                    cover: this.cover
+                    cover: this.cover,
+                    duration: "-1:59"
                 })
 
                 fetch("/user", {

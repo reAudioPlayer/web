@@ -43,7 +43,7 @@
     </div>
 </template>
 <script>
-import FindSources from '../ContextMenus/FindSources.vue'
+import FindSources from '../contextMenus/FindSources.vue'
     export default {
         name: "EditSong",
         components: {
