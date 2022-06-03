@@ -1,5 +1,6 @@
 <template>
     <div class="itemBig">
+        <add-album-to-playlist :id="this.href?.replace('https://open.spotify.com/album/', '')" :userData="userData" :cover="cover" :title="title" :artist="artist" :href="href" ref="addAlbum" />
         <div class="item" @click="redirect">
             <img :src="cover" />
             <div class="wrapper">
@@ -12,8 +13,12 @@
 </template>
 
 <script>
+    import AddAlbumToPlaylist from '@/components/popups/AddAlbumToPlaylist.vue'
     export default {
         name: 'ReleaseItemBig',
+        components: {
+            AddAlbumToPlaylist
+        },
         methods: {
             redirect() {
                 this.$refs.addAlbum.showModal = true
