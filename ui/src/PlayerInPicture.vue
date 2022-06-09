@@ -1,6 +1,6 @@
 <template>
     <div class="player" v-if="!disabled">
-        <div class="header">
+        <div class="header" :class="{ minimised }">
             <div class="marquee">
                 <Marquee :text="name" />
             </div>
@@ -76,7 +76,7 @@
     flex-direction: column;
     background: var(--player-background);
     overflow: hidden;
-    box-shadow: 0 0 50px 5px black;
+    box-shadow: 0 0 100px 3px rgba(0, 0, 0, .8);
 
     .header {
         padding: 0px 8px 8px 8px;
@@ -101,6 +101,10 @@
             span:hover {
                 cursor: pointer;
             }
+        }
+
+        &.minimised {
+            margin-bottom: 8px;
         }
     }
 
