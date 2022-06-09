@@ -193,6 +193,7 @@
         flex-direction: column;
         padding: 10px;
         max-height: calc(100vh - 20px);
+        max-height: calc(100vh - 20px);
         height: 100%;
         z-index: 1;
         justify-content: space-between;

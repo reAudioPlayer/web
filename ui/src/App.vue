@@ -1,12 +1,19 @@
 <script setup>
 import Sidebar from './Sidebar.vue'
 import Body from "./Body.vue";
+import PlayerInPicture from "./PlayerInPicture.vue";
 </script>
 
 <template>
 <div class="appRoot">
-    <Sidebar @toggleFullSidebar="fullSidebar = !fullSidebar" :authorised="authorised" :userData="userData" :show="fullSidebar" />
-    <Body @toggleFullSidebar="fullSidebar = !fullSidebar" :authorised="authorised" :userData="userData" v-if="!fullSidebar" />
+    <div class="appRoot">
+        <div class="bgImageWrapper" :class="{ hidden: !coverAsBackground }" ><div class="bgImage" :style="{ backgroundImage: `url(${cover})` }" /></div>
+        <div class="interface">
+            <Sidebar @toggleFullSidebar="fullSidebar = !fullSidebar" :authorised="authorised" :userData="userData" :show="fullSidebar" />
+            <Body @toggleFullSidebar="fullSidebar = !fullSidebar" :authorised="authorised" :userData="userData" v-if="!fullSidebar" />
+        </div>
+        <PlayerInPicture v-if="!maximised" @expandCover="expandCover" :expandCover="!shallExpandCover" />
+    </div>
 </div>
 </template>
 
@@ -234,7 +241,7 @@ export default {
 
     div.appRoot {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         width: 100vw;
         height: 100vh;
     }

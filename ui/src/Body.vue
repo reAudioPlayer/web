@@ -23,7 +23,7 @@ export default {
         overflow-y: auto;
         overflow-x: hidden;
         max-width: calc(100vw - var(--sidebar-width));
-        max-height: 100vh;
+        max-height: calc(100vh);
 
         &.noSidebar {
             max-width: 100vw;

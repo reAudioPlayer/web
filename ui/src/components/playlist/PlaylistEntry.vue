@@ -179,10 +179,23 @@
                 {
                     body.type = "collection"
                 }
-                fetch("/api/at", {
+                
+                const event = new CustomEvent('player.play', { detail: {
+                        id: this.id,
+                        favourite: this.favourited,
+                        album: this.album,
+                        artist: this.artist,
+                        title: this.title,
+                        duration: this.duration,
+                        cover: this.cover,
+                        source: this.source
+                    } });
+                window.dispatchEvent(event);
+
+                /*fetch("/api/at", {
                     method: "POST",
                     body: JSON.stringify(body)
-                })
+                })*/
             },
             setFavourite() {
 
@@ -344,7 +357,7 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         color: var(--font-colour);
-        width: 100%;
+        max-width: 100%;
         
         &.artist {
             color: var(--font-darker);
