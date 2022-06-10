@@ -52,7 +52,11 @@
                         v-observe-visibility="headerVisibilityChanged">
                         <img class="cover" :src="cover" />
                         <div class="details">
-                            <div class="detailswrapper"><h7>Album</h7><span class="material-symbols-rounded share" @click="share">share</span></div>
+                            <div class="detailswrapper">
+                                <h7>Album</h7>
+                                <span class="material-symbols-rounded share" @click="share">share</span>
+                                <span class="material-symbols-rounded share fill" @click="preview">play_arrow</span>
+                            </div>
                             <h1>{{title}}</h1>
                             <h5>{{artist}}</h5>
                         </div>
@@ -62,7 +66,7 @@
                     <hr>
                     <album-entry @add="add" v-for="(track, index) in playlist" :key="index" :added="track.added"
                         :index="index" :cover="track.cover" :artist="track.artists.join(', ')" :title="track.title"
-                        :source="track.source" :preview="track.preview" />
+                        :source="track.src" :preview="this.href" />
                 </div>
                 <div class="confirm">
                     <button @click="addAll" class="negative">Add All</button>
@@ -106,6 +110,15 @@
         methods: {
             share() {
                 window.open(this.href)
+            },
+            preview() {
+                console.log(this.href)
+                const event = new CustomEvent('player.play', { detail: {
+                    artist: this.artist,
+                    title: this.title,
+                    source: this.href
+                } });
+                window.dispatchEvent(event);
             },
             close() {
                 this.showModal = false
@@ -195,10 +208,16 @@
     }
 </style>
 
-<style scoped>
+<style scoped lang="scss">
 
-    .share:hover {
-        cursor: pointer;
+    .share {
+        &:hover {
+            cursor: pointer;
+        }
+
+        &.fill {
+            font-variation-settings: 'FILL' 1;
+        }
     }
 
     .wrapper {

@@ -5,7 +5,7 @@ import PlayerInPicture from "./PlayerInPicture.vue";
 </script>
 
 <template>
-<div class="appRoot">
+<div class="appRoot" id="appRoot">
     <div class="appRoot">
         <div class="bgImageWrapper" :class="{ hidden: !coverAsBackground }" ><div class="bgImage" :style="{ backgroundImage: `url(${cover})` }" /></div>
         <div class="interface">

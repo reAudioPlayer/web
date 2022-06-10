@@ -19,7 +19,7 @@ a<template>
 </template>
 
 <script>
-    import SongCtx from '../ContextMenus/SongCtx.vue'
+    import SongCtx from '../contextMenus/SongCtx.vue'
     import Marquee from '../Marquee.vue'
     import EditSong from '../popups/EditSong.vue'
 

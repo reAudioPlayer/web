@@ -10,6 +10,8 @@ export default {
     name: "MiniPlayer",
     props: {
         src: String,
+        artist: String,
+        title: String,
         display: {
             type: Boolean,
             default: true
@@ -31,6 +33,15 @@ export default {
             this.get("play")
         },
         playPause() {
+            const event = new CustomEvent('player.play', { detail: {
+                    title: this.title,
+                    artist: this.artist,
+                    source: this.src
+                } });
+            window.dispatchEvent(event);
+
+            return;
+
             if (!this.$refs.player.onended)
             {
                 this.$refs.player.onended = () => {
