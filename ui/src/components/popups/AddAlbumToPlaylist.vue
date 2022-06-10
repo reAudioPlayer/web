@@ -53,7 +53,7 @@
                         <img class="cover" :src="cover" />
                         <div class="details">
                             <div class="detailswrapper">
-                                <h7>Album</h7>
+                                <h7 class="hideIfMobile">Album</h7>
                                 <span class="material-symbols-rounded share" @click="share">share</span>
                                 <span class="material-symbols-rounded share fill" @click="preview">play_arrow</span>
                             </div>
@@ -61,8 +61,8 @@
                             <h5>{{artist}}</h5>
                         </div>
                     </div>
-                    <hr>
-                    <album-header />
+                    <hr class="hideIfMobile">
+                    <album-header class="hideIfMobile" />
                     <hr>
                     <album-entry @add="add" v-for="(track, index) in playlist" :key="index" :added="track.added"
                         :index="index" :cover="track.cover" :artist="track.artists.join(', ')" :title="track.title"
@@ -183,7 +183,9 @@
 </script>
 
 
-<style>
+<style lang="scss">
+    $mobileWidth: 950px;
+
     .modal-containerr {
         display: flex;
         justify-content: center;
@@ -196,6 +198,12 @@
         position: relative;
         width: 60%;
         max-height: 70vh;
+
+        @media screen and (max-width: $mobileWidth) {
+            width: 100% !important;
+            max-height: 100vh;
+        }
+
         padding: 16px;
         overflow: auto;
         background: var(--font-contrast);
@@ -209,6 +217,8 @@
 </style>
 
 <style scoped lang="scss">
+
+    $mobileWidth: 950px;
 
     .share {
         &:hover {
@@ -342,12 +352,22 @@
         display: flex;
         flex-direction: row;
         margin-bottom: 20px;
-    }
 
-    .playlisteditor>img {
-        width: 20%;
-        margin-right: 20px;
-        border-radius: 5px;
+        img {
+            width: 20%;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+
+        @media screen and (max-width: $mobileWidth) {
+            flex-direction: column;
+
+            img {
+                align-self: center;
+                width: 40%;
+                margin-right: 0;
+            }
+        }
     }
 
     .playlisteditor>.details {
@@ -361,6 +381,10 @@
         font-size: 2em;
         margin-top: 10px;
         margin-bottom: 10px;
+
+        @media screen and (max-width: $mobileWidth) {
+            font-size: 1.4em;
+        }
     }
 
     .playlisteditor>.details>.detailswrapper {
@@ -368,12 +392,24 @@
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
+
+        @media screen and (max-width: $mobileWidth) {
+            justify-content: center;
+        }
     }  
 
     .playlisteditor>.details>.detailswrapper>.share {
-        margin-left: 10px;
         line-height: 15px;
         font-size: 15px;
+        margin-left: 10px;
+
+        @media screen and (max-width: $mobileWidth) {
+            margin-top: 10px;
+
+            &:nth-child(2) {
+                margin-left: 0;
+            }
+        }
     }
 
     .playlisteditor>.details>h5 {

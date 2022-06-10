@@ -5,8 +5,12 @@
         <span v-if="!hovering" @click="edit" class="id">{{index + 1}}</span>
         <div class="track">
             <div class="trackwrapper">
-                <span class="title" :class="{ 'playing': playing }">{{title}}</span>
-                <span class="artist" :class="{ 'playing': playing }">{{artist}}</span>
+                <span class="title" :class="{ 'playing': playing }">
+                    <Marquee :text="title" />
+                </span>
+                <span class="artist" :class="{ 'playing': playing }">
+                    <Marquee :text="artist" />
+                </span>
             </div>
         </div>
         <span @click="add" class="material-symbols-rounded edit" ref="add">add</span>
@@ -14,9 +18,10 @@
 </template>
 
 <script>
+    import Marquee from '../Marquee.vue'
     import MiniPlayer from '../MiniPlayer.vue'
     export default {
-        components: { MiniPlayer },
+        components: { MiniPlayer, Marquee },
         name: 'AlbumEntry',
         props: {
             index: Number,
@@ -72,6 +77,8 @@
 </script>
 
 <style scoped lang="scss">
+    $mobileWidth: 950px;
+
     div.albumEntry {
         padding-top: 7px;
         padding-bottom: 7px;
@@ -96,10 +103,16 @@
         text-align: right;
         line-height: var(--playlistEntry-height);
         flex-shrink: 0;
+
+        @media screen and (max-width: $mobileWidth) {
+            font-size: .8em;
+            width: 40px;
+        }
     }
 
     .edit {
-        margin-right: 10px;    
+        margin-right: 10px;
+        width: 20px;
     }
 
     .favourite {
@@ -134,6 +147,10 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        @media screen and (max-width: $mobileWidth) {
+            width: 50%;
+        }
     }
 
     .title {
@@ -142,6 +159,16 @@
         text-overflow: ellipsis;
         max-width: 100%;
         color: var(--font-colour);
+
+        @media screen and (max-width: $mobileWidth) {
+            font-size: .8em;
+        }
+    }
+
+    .artist {
+        @media screen and (max-width: $mobileWidth) {
+            font-size: .7em;
+        }
     }
 
     .title.playing, .id.playing {
@@ -159,6 +186,10 @@
     div.albumEntry.selected .artist,
     div.albumEntry.selected .id {
         color: var(--font-colour);
+
+        @media screen and (max-width: $mobileWidth) {
+            font-size: .7em;
+        }
     }
 
     img {
@@ -173,6 +204,10 @@
         flex-direction: column;
         max-width: 35vw;
         margin-right: 100px;
+
+        @media screen and (max-width: $mobileWidth) {
+            max-width: 68vw;
+        }
     }
 
     .duration {

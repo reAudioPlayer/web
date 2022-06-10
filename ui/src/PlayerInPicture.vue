@@ -132,7 +132,7 @@
                     const matches = url.match(myregexp)
                     
                     if (matches?.[1]) {
-                        this.el = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/${matches[1]}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+                        this.el = `<iframe src="https://open.spotify.com/embed/album/${matches[1]}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
                         
                         this.minimised = false;
                         this.disabled = false;
