@@ -64,10 +64,11 @@
     h4 {
         margin: 0;
         font-size: 2em;
+        color: white
     }
 
     p {
         margin: 0;
-        color: var(--font-colour);
+        color: white;
     }
 </style>

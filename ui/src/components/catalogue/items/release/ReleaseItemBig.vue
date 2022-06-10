@@ -30,7 +30,8 @@
             title: String,
             artist: String,
             href: String,
-            releaseDate: String
+            releaseDate: String,
+            userData: Object
         }
     }
 </script>
