@@ -153,6 +153,17 @@
                     duration: "-1:59"
                 })
 
+                fetch("/user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(this.userData.data)
+                }).then(x => {
+                    console.log(x)
+                    this.$emit("close")
+                })
+
                 track.added = true;
             }
         },
