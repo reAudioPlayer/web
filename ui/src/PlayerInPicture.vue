@@ -167,6 +167,8 @@
 </script>
 
 <style lang="scss">
+$mobileWidth: 950px;
+
 .player {
     position: absolute;
     
@@ -175,6 +177,13 @@
 
     z-index: 200;
     width: 30%;
+
+    @media screen and (max-width: $mobileWidth) {
+        width: calc(100% - 16px);
+        left: 8px !important;
+        bottom: 8px !important;
+    }
+
     border-radius: 8px;
     display: flex;
     flex-direction: column;
