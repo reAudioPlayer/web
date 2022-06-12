@@ -25,7 +25,9 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    $mobileWidth: 950px;
+
     p.note {
         font-size: .8em;
     }
@@ -36,6 +38,10 @@
         border-radius: 5px;
         min-height: 10vh;
         margin: 10px;
+
+        @media screen and (max-width: $mobileWidth) {
+            grid-column: span 1;
+        }
     }
 
     .item {

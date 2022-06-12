@@ -8,14 +8,14 @@
             <img :src="cover || '/assets/img/music_placeholder.png'">
             <div class="trackwrapper">
                 <span class="title" :class="{ 'playing': playing }">
-                    <router-link class="linkOnHover" :to="`/track/${trackId}`">
+                    <!--router-link class="linkOnHover" :to="`/track/${trackId}`"-->
                         <Marquee :text="title" />
-                    </router-link>
+                    <!--/router-link-->
                 </span>
                 <span class="artist" :class="{ 'playing': playing }">
-                    <router-link class="linkOnHover" :to="`/search/${artist}`">
+                    <!--router-link class="linkOnHover" :to="`/search/${artist}`"-->
                         <Marquee :text="artist" />
-                    </router-link>
+                    <!--/router-link-->
                 </span>
             </div>
         </div>
@@ -26,17 +26,17 @@
     </div>
     <div class="mobilePlaylist showIfMobile">
         <div class="track">
-            <img :src="cover || '/assets/img/music_placeholder.png'">
+            <img @click="playAt" :src="cover || '/assets/img/music_placeholder.png'">
             <div class="trackwrapper">
                 <span class="title" :class="{ 'playing': playing }">
-                    <router-link class="linkOnHover" :to="`/track/${trackId}`">
+                    <!--router-link class="linkOnHover" :to="`/track/${trackId}`"-->
                         <Marquee :text="title" />
-                    </router-link>
+                    <!--/router-link-->
                 </span>
                 <span class="artist" :class="{ 'playing': playing }">
-                    <router-link class="linkOnHover" :to="`/search/${artist}`">
+                    <!--router-link class="linkOnHover" :to="`/search/${artist}`"-->
                         <Marquee :text="artist" />
-                    </router-link>
+                    <!--/router-link-->
                 </span>
             </div>
         </div>

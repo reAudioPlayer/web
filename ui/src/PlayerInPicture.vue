@@ -31,11 +31,11 @@
                     return;
                 }
 
-                console.log(this.$refs.player)
                 this.$nextTick(() => {
-                    console.log(this.$refs.player)
                     this.$refs.player.addEventListener("mousedown", this.mouseDown, false);
+                    this.$refs.player.addEventListener("touchstart", this.mouseDown, false);
                     window.addEventListener("mouseup", this.mouseUp, false)
+                    window.addEventListener("touchend", this.mouseUp, false)
                 });
             }
         },
@@ -46,8 +46,8 @@
 
                 evt = evt || window.event;
 
-                var posX = evt.clientX,
-                    posY = evt.clientY,
+                var posX = evt.touches ?  evt.touches[0].clientX : evt.clientX,
+                    posY = evt.touches ?  evt.touches[0].clientY :  evt.clientY,
                     divTop = divid.offsetTop,
                     divLeft = divid.offsetLeft,
                     eWi = parseInt(divid.offsetWidth),
@@ -56,15 +56,14 @@
                     cHe = parseInt(container.offsetHeight) - 8;
                 
                 container.style.cursor='move';
-                console.log(divTop, divLeft)
                 var diffX = posX - divLeft,
                     diffY = posY - divTop;
-                document.onmousemove = (evt) => {
+                const event = (evt) => {
                     evt = evt || window.event;
                     evt.preventDefault();
                     evt.stopPropagation();
-                    var posX = evt.clientX,
-                        posY = evt.clientY,
+                    var posX = evt.touches ?  evt.touches[0].clientX : evt.clientX,
+                        posY = evt.touches ?  evt.touches[0].clientY :  evt.clientY,
                         aX = posX - diffX,
                         aY = posY - diffY;
                     if (aX < 8) aX = 8;
@@ -73,6 +72,8 @@
                     if (aY + eHe > cHe) aY = cHe - eHe;
                     this.divMove(divid,aX,aY);
                 }
+                document.onmousemove = event;
+                document.addEventListener("touchmove", event, { passive: false, capture: true });
             },
             mouseUp() {
                 document.getElementById("appRoot").style.cursor='default';
@@ -180,8 +181,8 @@ $mobileWidth: 950px;
 
     @media screen and (max-width: $mobileWidth) {
         width: calc(100% - 16px);
+        /*top: calc(100% - 300px - 48px) */;
         left: 8px !important;
-        bottom: 8px !important;
     }
 
     border-radius: 8px;
