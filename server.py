@@ -122,7 +122,7 @@ def getAccessToken():
     redirectTo = request.args.get('redirect')
 
     if None in (user, redirectTo) or "<token>" not in redirectTo:
-        return Response(status = 401)
+        return redirect("/login")
 
     find = next((token for (token, val) in __accessTokens.items() if val["access_token"] == user["access_token"]), None)
     if find:
