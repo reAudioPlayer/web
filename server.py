@@ -166,7 +166,16 @@ def updateUserData(user: dict, data: dict):
         return string.replace("'", "''")
 
     with conn.cursor() as curs:
-        curs.execute('UPDATE "UserDbs" SET data = \'' + toSetter(json.dumps(data)) + '\' WHERE ' + query)
+        curs.execute('SELECT id FROM "UserDbs" WHERE ' + query)
+        row = curs.fetchone()
+        stringified = toSetter(json.dumps(data))
+        if row:
+            print("update existing")
+            curs.execute('UPDATE "UserDbs" SET data = \'' + stringified + '\' WHERE ' + query)
+        else:
+            print("create new")
+            query = f"('{name}', '{pw}', '{stringified}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+            curs.execute('INSERT INTO "UserDbs" (username, password, data, "createdAt", "updatedAt") VALUES ' + query)
 
     conn.commit()
 
