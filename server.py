@@ -182,8 +182,12 @@ def prepareUserWithData(user: dict):
     with conn.cursor() as curs:
         curs.execute('SELECT data FROM "UserDbs" WHERE ' + query)
 
-        (data,) = curs.fetchone()
-        value["data"] = json.loads(data or "{}")
+        try:
+            (data,) = curs.fetchone()
+            value["data"] = json.loads(data or "{}")
+        except:
+            value["data"] = { }
+            return value
 
     return value
 
