@@ -71,6 +71,12 @@
         props: {
             userData: Object
         },
+        watch: {
+            userData() {
+                this.spotifyClientId = this.userData?.data?.spotifyApiId
+                this.spotifyClientSecret = this.userData?.data?.spotifyApiSecret
+            }
+        },
         data() {
             const themes = [
                 "night-jade",
