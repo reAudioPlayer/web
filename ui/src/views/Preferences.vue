@@ -1,12 +1,35 @@
 <template>
     <div class="preferences">
-        <div class="mobileMenu showIfMobile">
-            <span @click="toggleFullSidebar" class="material-symbols-rounded">menu</span>
+        <div class="spotify">
+            <h2>Spotify</h2>
+            <details>
+                <summary>How to</summary>
+            <p>1) Head over to the <a @click="() => redirect('https://developer.spotify.com/dashboard/applications')">spotify developer dashboard</a></p>
+            <p>2) Create An App</p>
+            <p>3) Enter any name and any description</p>
+            <p>4) Edit the settings: set the redirect url to <a href="https://eu-apollo.herokuapp.com/collection/releases">https://eu-apollo.herokuapp.com/collection/releases</a></p>
+            <p>5) Copy and enter the client id and secret into the corresponding input field</p>
+            </details>
+            <div class="wrapTogether">
+                <p>Client ID: </p><input type="text" v-model="spotifyClientId" />
+            </div>
+            <div class="wrapTogether">
+                <p>Client Secret: </p><input type="text" v-model="spotifyClientSecret" />
+            </div>
+            <div class="wrapTogether spaceBetween">
+                <button @click="saveSpotify">save</button>
+            </div>
         </div>
-        <full-shelf heading="Themes" :key="themeSelected">
-            <theme @selected="updateThemes" v-for="(theme, index) in themes" :key="index"
-                :name="theme" />
-        </full-shelf>
+        <div>
+            <h2>Themes</h2>
+            <div class="mobileMenu showIfMobile">
+                <span @click="toggleFullSidebar" class="material-symbols-rounded">menu</span>
+            </div>
+            <full-shelf heading="" :key="themeSelected">
+                <theme @selected="updateThemes" v-for="(theme, index) in themes" :key="index"
+                    :name="theme" />
+            </full-shelf>
+        </div>
     </div>
 </template>
 
@@ -23,7 +46,30 @@
             toggleFullSidebar()
             {
                 this.$emit("toggleFullSidebar")
+            },
+            saveSpotify()
+            {
+                if (!this.userData.data)
+                {
+                    this.userData.data = { }
+                }
+                this.userData.data.spotifyApiId = this.spotifyClientId;
+                this.userData.data.spotifyApiSecret = this.spotifyClientSecret;
+
+                fetch("/user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(this.userData.data)
+                }).then(x => {
+                    console.log(x)
+                    this.$emit("close")
+                })
             }
+        },
+        props: {
+            userData: Object
         },
         data() {
             const themes = [
@@ -47,7 +93,9 @@
             const themeSelected = window.getCurrentTheme()
             return {
                 themes,
-                themeSelected
+                themeSelected,
+                spotifyClientId: this.userData?.data?.spotifyApiId,
+                spotifyClientSecret: this.userData?.data?.spotifyApiSecret
             }
         }
     }
@@ -183,5 +231,9 @@
 }
 .checkbox input[type=checkbox]:focus + label::before {
   outline: 0;
+}
+
+a {
+    color: var(--font-colour);
 }
 </style>

@@ -225,19 +225,6 @@
                     this.$emit("close")
                 })
                 return;
-                fetch("/api/updateSong", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        id: this.id,
-                        favourite: this.favourited,
-                        album: this.album,
-                        artist: this.artist,
-                        title: this.title,
-                        duration: this.duration,
-                        cover: this.cover,
-                        source: this.source
-                    })
-                })
             }
         },
         watch: {
