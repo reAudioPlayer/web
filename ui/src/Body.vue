@@ -1,6 +1,11 @@
+<script setup>
+import Lock from "./views/Lock.vue";
+</script>
+
 <template>
     <div class="body">
-        <router-view @toggleFullSidebar="() => $emit('toggleFullSidebar')" :authorised="authorised" :userData="userData" />
+        <router-view v-if="authorised" @toggleFullSidebar="() => $emit('toggleFullSidebar')" :authorised="authorised" :userData="userData" />
+        <Lock v-else />
     </div>
 </template>
 
@@ -11,6 +16,11 @@ export default {
         noSidebar: Boolean,
         authorised: Boolean,
         userData: Object
+    },
+    computed: {
+        authorised() {
+            return Object.keys(this.userData).length || ["/about/privacy", "/"].includes(this.$route.path)
+        }
     }
 }
 </script>

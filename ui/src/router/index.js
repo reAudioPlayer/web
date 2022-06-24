@@ -21,12 +21,6 @@ const router = createRouter({
         path: '/collection/releases',
         name: 'releases',
         component: () => import('../views/collection/Releases.vue')
-    },  {
-        path: '/collection/playlists',
-        component: () => import("../views/Collection/Playlists.vue"),
-        meta: {
-            title: "Your Library - reAudioPlayer One"
-        }
     }, {
         path: '/collection/tracks',
         component: () => import("../views/collection/Tracks.vue"),

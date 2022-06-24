@@ -36,6 +36,7 @@
                     this.$refs.player.addEventListener("touchstart", this.mouseDown, false);
                     window.addEventListener("mouseup", this.mouseUp, false)
                     window.addEventListener("touchend", this.mouseUp, false)
+                    window.addEventListener("touchcancel", this.mouseUp, false)
                 });
             }
         },
