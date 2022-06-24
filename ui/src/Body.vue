@@ -4,7 +4,7 @@ import Lock from "./views/Lock.vue";
 
 <template>
     <div class="body">
-        <router-view v-if="authorised" @toggleFullSidebar="() => $emit('toggleFullSidebar')" :authorised="authorised" :userData="userData" />
+        <router-view v-if="unlocked" @toggleFullSidebar="() => $emit('toggleFullSidebar')" :userData="userData" />
         <Lock v-else />
     </div>
 </template>
@@ -18,8 +18,8 @@ export default {
         userData: Object
     },
     computed: {
-        authorised() {
-            return Object.keys(this.userData).length || ["/about/privacy", "/"].includes(this.$route.path)
+        unlocked() {
+            return this.authorised || ["/about/privacy", "/"].includes(this.$route.path)
         }
     }
 }
