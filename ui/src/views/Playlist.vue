@@ -54,6 +54,18 @@
             userData: Object
         },
         data() {
+            window.addEventListener('player.ended', e => {
+                this.updatePlaylist(e.detail.id)
+                const i = this.playlist.findIndex(x => x.id == e.detail.id);
+                if (i >= this.playlist.length)
+                {
+                    return;
+                }
+
+                const event = new CustomEvent('player.play', { detail: this.playlist[i + 1] })
+                window.dispatchEvent(event);
+            });
+
             this.updatePlaylist()
 
             if (!this.getId())
@@ -64,17 +76,6 @@
             {
                 return;
             }
-
-            /*if (this.$route.params.id == "create")
-            {
-                fetch("/api/playlist/create")
-                    .then(x => x.text()).then(y => {
-                        const link = hashids.encode(y);
-                        console.log(link)
-                        this.$router.push(link)
-                    })
-                return
-            }*/
 
             const jdata = this.userData?.data?.playlists?.[Number(this.getId())]
             const playlist = jdata?.songs || []

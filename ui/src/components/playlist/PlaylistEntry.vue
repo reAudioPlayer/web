@@ -191,11 +191,6 @@
                         source: this.source
                     } });
                 window.dispatchEvent(event);
-
-                /*fetch("/api/at", {
-                    method: "POST",
-                    body: JSON.stringify(body)
-                })*/
             },
             setFavourite() {
 

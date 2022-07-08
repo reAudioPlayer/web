@@ -24,6 +24,15 @@
         props: {
             expandCover: Boolean
         },
+        mounted() {
+            const scScript = document.createElement('script')
+            scScript.setAttribute('src', 'https://w.soundcloud.com/player/api.js')
+            document.head.appendChild(scScript)
+
+            const ytScript = document.createElement('script')
+            ytScript.setAttribute('src', 'https://www.youtube.com/iframe_api')
+            document.head.appendChild(ytScript)
+        },
         watch: {
             disabled() {
                 if (this.disabled)
@@ -41,6 +50,10 @@
             }
         },
         methods: {
+            onSongEnd() {
+                const event = new CustomEvent('player.ended', { detail: { id: this.id } })
+                window.dispatchEvent(event);
+            },
             mouseDown(evt) {
                 const divid = this.$refs.player;
                 const container = document.getElementById("appRoot");
@@ -61,7 +74,9 @@
                     diffY = posY - divTop;
                 const event = (evt) => {
                     evt = evt || window.event;
-                    evt.preventDefault();
+                    if (!evt.touches) {
+                        evt.preventDefault();
+                    }
                     evt.stopPropagation();
                     var posX = evt.touches ?  evt.touches[0].clientX : evt.clientX,
                         posY = evt.touches ?  evt.touches[0].clientY :  evt.clientY,
@@ -74,11 +89,12 @@
                     this.divMove(divid,aX,aY);
                 }
                 document.onmousemove = event;
-                document.addEventListener("touchmove", event, { passive: false, capture: true });
+                document.ontouchmove = event;
             },
             mouseUp() {
                 document.getElementById("appRoot").style.cursor='default';
                 document.onmousemove = function(){}
+                document.ontouchmove = function(){}
             },
             divMove(divid, xpos, ypos) {
                 divid.style.bottom = "auto";
@@ -90,10 +106,10 @@
         },
         setup() {},
         data() {
-
             window.addEventListener('player.play', e => {
                 const song = e.detail;
                 const url = song.source;
+                this.id = song.id
                 this.name = `${song.artist} - ${song.title}`
 
                 if (url.includes("youtu"))
@@ -103,7 +119,16 @@
 
                     if (matches?.[1]) {
                         this.el =
-                            `<iframe height="70" src="https://www.youtube.com/embed/${matches[1]}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+                            `<iframe id="yt-player" height="70" src="https://www.youtube.com/embed/${matches[1]}?autoplay=1&enablejsapi=1&version=3" sandbox="allow-same-origin allow-scripts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+
+
+                        window.setTimeout(() => {
+                            this.ytPlayer = new YT.Player('yt-player');
+                            this.ytPlayer.addEventListener("onStateChange", evt => evt.data == 0 ? this.onSongEnd() : null);
+                        }, 1000);
+
+                        //this.ytPlayer.loadVideoById(matches[1]);
+
 
                         this.minimised = false;
                         this.disabled = false;
@@ -149,9 +174,16 @@
                         this.el = jdata.html.replace("height=\"400\"", "height=\"70\"").replace(
                             "&show_artwork=true", "&show_artwork=true&auto_play=true").replace(
                             "<iframe",
-                            '<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"'
+                            '<iframe id="scPlayer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"'
                             );
                     })
+
+                    window.setTimeout(() => {
+                        const iframeElement = document.getElementById('scPlayer');
+                        const widget = SC.Widget(iframeElement);
+                        widget.bind(SC.Widget.Events.FINISH, this.onSongEnd)
+                    }, 1000);
+
                     this.minimised = false;
                     this.disabled = false;
                     return;
@@ -162,7 +194,9 @@
                 el: null,
                 minimised: true,
                 disabled: true,
-                name: ""
+                name: "",
+                id: null,
+                ytPlayer: null
             }
         }
     }
