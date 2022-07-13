@@ -1,8 +1,11 @@
+<script setup>
+import Logo from '/src/assets/images/logo/logo.svg'
+</script>
 <template>
     <div class="sidebar" :class=" { 'showDespiteMobile': show } ">
         <div class="static">
             <div class="collapseSidebar" :class=" { 'minimised': minimised } ">
-                <h2 v-if="!minimised" @click="onLogoClick">reAudioPlayer Web</h2>
+                <Logo v-if="!minimised" class="logo" @click="onLogoClick" />
                 <span @click="minimised = !minimised"
                     class="hideIfMobile clickSymbol material-symbols-rounded">{{ minimised ? "chevron_right" : "chevron_left" }}</span>
             </div>
@@ -97,6 +100,15 @@
 <style scoped lang="scss">
     $mobileWidth: 950px;
 
+    .logo {
+        fill: var(--font-colour);
+        padding: 10px;
+        width: 60%;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
 
     a.userData {
         padding: 10px 0 10px 10px;
