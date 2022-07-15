@@ -40,7 +40,7 @@
 
     .wrapper {
         background: var(--background-light);
-        border-radius: 5px;
+        border-radius: 20px;
         min-height: 10vh;
         margin: 10px;
     }
@@ -57,7 +57,7 @@
 
     img {
         width: 100%;
-        border-radius: 2px;
+        border-radius: 12px;
     }
 
     h4 {

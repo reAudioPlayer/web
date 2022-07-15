@@ -38,7 +38,7 @@ import PlaylistCtx from '../../../ContextMenus/PlaylistCtx.vue'
     .itemBig {
         grid-column: span 3;
         background: var(--hover-1);
-        border-radius: 5px;
+        border-radius: 20px;
         min-height: 5vh;
         margin: 10px;
     }
@@ -62,7 +62,7 @@ import PlaylistCtx from '../../../ContextMenus/PlaylistCtx.vue'
 
     img {
         width: 30%;
-        border-radius: 2px;
+        border-radius: 12px;
         margin-right: 20px;
     }
 
