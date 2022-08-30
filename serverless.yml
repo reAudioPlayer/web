@@ -1,0 +1,27 @@
+service: reap-web
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  runtime: python3.9
+  stage: dev
+  region: eu-central-1
+  memorySize: 128
+
+plugins:
+  - serverless-wsgi
+
+custom:
+  wsgi:
+    app: app.app
+
+package:
+  include:
+    - requirements.txt
+
+functions:
+  app:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'

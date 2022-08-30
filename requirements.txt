@@ -9,4 +9,5 @@ ytmusicapi
 sclib
 flask-cors>=3.0.10
 validators
+werkzeug
 git+https://github.com/3jackdaws/soundcloud-lib.git

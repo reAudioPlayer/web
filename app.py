@@ -142,7 +142,7 @@ def updateUserData(accessToken: str):
     if request.method == "GET":
         return prepareUserWithData(user)
 
-    updateUserData(user, request.json)
+    _updateUserData(user, request.json)
     return "success"
 
 @app.route("/user", methods = ["GET", "POST"])
@@ -152,12 +152,12 @@ def getUser():
         return Response("false", status = 401)
     if request.method == "GET":
         return prepareUserWithData(user)
-    updateUserData(user, request.json)
+    _updateUserData(user, request.json)
     return "success"
 
 ##
 
-def updateUserData(user: dict, data: dict):
+def _updateUserData(user: dict, data: dict):
     name = user["userinfo"]["email"]
     pw = user["userinfo"]["sub"]
     query = f"\"username\" = '{name}' AND \"password\" = '{pw}'"
