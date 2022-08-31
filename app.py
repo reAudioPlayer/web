@@ -12,7 +12,7 @@ from hashids import Hashids
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, send_file, redirect, send_from_directory, session, url_for, request, jsonify, Response
+from flask import Flask, send_file, redirect, send_from_directory, session, request, jsonify, Response
 
 from werkzeug.serving import run_simple
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
@@ -62,7 +62,7 @@ def callback():
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("callback", _external=True)
+        redirect_uri = "https://reaudioplayer.tk/callback"
     )
 
 @app.route("/logout")
@@ -73,7 +73,7 @@ def logout():
         + "/v2/logout?"
         + urlencode(
             {
-                "returnTo": url_for("wildcard", _external=True),
+                "returnTo": "https://reaudioplayer.tk/",
                 "client_id": env.get("AUTH0_CLIENT_ID"),
             },
             quote_via=quote_plus,
