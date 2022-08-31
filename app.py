@@ -3,16 +3,19 @@
 
 import json
 from time import time
-import psycopg2
+from userModel import UserModel
 from spotipy import Spotify
 from os import environ as env
-from urllib.parse import quote_plus, urlencode, urlparse
+from urllib.parse import quote_plus, urlencode
 
 from hashids import Hashids
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, redirect, send_file, send_from_directory, session, url_for, request, jsonify, Response
+from flask import Flask, send_file, redirect, send_from_directory, session, url_for, request, jsonify, Response
+
+from werkzeug.serving import run_simple
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 import mimetypes
 
@@ -34,30 +37,7 @@ app.secret_key = env.get("APP_SECRET_KEY")
 
 ranHashids = Hashids(str(time()), 10)
 
-conn = None
-
-if env.get('DATABASE_URL'):
-    url = urlparse(env.get('DATABASE_URL'))
-    dbname = url.path[1:]
-    user = url.username
-    password = url.password
-    host = url.hostname
-    port = url.port
-
-    conn = psycopg2.connect(
-                dbname=dbname,
-                user=user,
-                password=password,
-                host=host,
-                port=port
-                )
-
-else:
-    conn = psycopg2.connect(
-        host= "localhost",
-        database="apollo-gamelib",
-        user="postgres",
-        password="fancyPassword")
+#UserModel.create_table(read_capacity_units=1, write_capacity_units=1)
 
 oauth = OAuth(app)
 
@@ -165,6 +145,8 @@ def _updateUserData(user: dict, data: dict):
     def toSetter(string: str) -> str:
         return string.replace("'", "''")
 
+    return
+
     with conn.cursor() as curs:
         curs.execute('SELECT id FROM "UserDbs" WHERE ' + query)
         row = curs.fetchone()
@@ -188,6 +170,8 @@ def prepareUserWithData(user: dict):
         "user": user
     }
 
+    return value
+
     with conn.cursor() as curs:
         curs.execute('SELECT data FROM "UserDbs" WHERE ' + query)
 
@@ -208,8 +192,10 @@ def asset(path: str):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def wildcard(path: str):
+    #return path
     return send_file('ui/dist/index.html')
 
+app.wsgi_app = DispatcherMiddleware(run_simple, {'/default': app.wsgi_app})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=env.get("PORT", 3002))

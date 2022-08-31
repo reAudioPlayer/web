@@ -3,11 +3,12 @@ python-dotenv>=0.19.2
 authlib>=1.0
 requests>=2.27.1
 hashids>=1.3.1
-psycopg2
 spotipy
 ytmusicapi
 sclib
 flask-cors>=3.0.10
 validators
 werkzeug
+cryptography
+pynamodb
 git+https://github.com/3jackdaws/soundcloud-lib.git

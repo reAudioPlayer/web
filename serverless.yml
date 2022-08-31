@@ -10,18 +10,16 @@ provider:
 
 plugins:
   - serverless-wsgi
-
-custom:
-  wsgi:
-    app: app.app
+  - serverless-python-requirements
 
 package:
-  include:
-    - requirements.txt
+  packRequirements: false
+  pythonBin: python3
 
 functions:
   app:
     handler: wsgi_handler.handler
     events:
-      - http: ANY /
-      - http: 'ANY {proxy+}'
+      - http:
+          method: any
+          path: /{proxy+}
