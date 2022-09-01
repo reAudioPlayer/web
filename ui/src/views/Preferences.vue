@@ -7,7 +7,7 @@
             <p>1) Head over to the <a @click="() => redirect('https://developer.spotify.com/dashboard/applications')">spotify developer dashboard</a></p>
             <p>2) Create An App</p>
             <p>3) Enter any name and any description</p>
-            <p>4) Edit the settings: set the redirect url to <a href="https://eu-apollo.herokuapp.com/collection/releases">https://eu-apollo.herokuapp.com/collection/releases</a></p>
+            <p>4) Edit the settings: set the redirect url to <a href="https://reaudioplayer.tk/collection/releases">https://reaudioplayer.tk/collection/releases</a></p>
             <p>5) Copy and enter the client id and secret into the corresponding input field</p>
             </details>
             <div class="wrapTogether">
@@ -80,7 +80,7 @@
         data() {
             const themes = [
                 "night-jade",
-                "neon",
+                "underground",
                 "default",
                 "light",
             ]

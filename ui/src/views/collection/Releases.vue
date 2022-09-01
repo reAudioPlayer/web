@@ -61,12 +61,12 @@ import CollectionHeader from '@/components/CollectionHeader.vue'
             const cacheName = "apollo.releaseCache"
             const cache = window.localStorage.getItem(cacheName);
 
-            if (!window.location.hash && this.userData.data?.spotifyApiId && this.userData.data?.spotifyApiSecret)
+            if (!window.location.hash && this.userData.tokens?.spotifyApiId && this.userData.tokens?.spotifyApiSecret)
             {
-                const redirectUri = window.location.href
+                const redirectUri = "https://reaudioplayer.tk/collection/releases"
                 const scope = "user-follow-read playlist-modify-public"
 
-                window.location.href = `https://accounts.spotify.com/authorize?client_id=${this.userData.data.spotifyApiId}&redirect_uri=${redirectUri.replace("#", "%23")}&scope=${scope}&response_type=token&state=123`
+                window.location.href = `https://accounts.spotify.com/authorize?client_id=${this.userData.tokens.spotifyApiId}&redirect_uri=${redirectUri.replace("#", "%23")}&scope=${scope}&response_type=token&state=123`
                 return;
             }
 
