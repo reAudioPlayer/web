@@ -85,11 +85,12 @@
                 "light",
             ]
             const themeSelected = window.getCurrentTheme()
+            console.log(this.userData)
             return {
                 themes,
                 themeSelected,
-                spotifyClientId: this.userData?.data?.spotifyApiId,
-                spotifyClientSecret: this.userData?.data?.spotifyApiSecret
+                spotifyClientId: this.userData?.tokens?.spotifyApiId,
+                spotifyClientSecret: this.userData?.tokens?.spotifyApiSecret
             }
         }
     }
