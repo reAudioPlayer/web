@@ -37,7 +37,7 @@ app.secret_key = env.get("APP_SECRET_KEY")
 
 ranHashids = Hashids(str(time()), 10)
 
-#UserModel.create_table(read_capacity_units=1, write_capacity_units=1)
+UserModel.create_table(read_capacity_units=1, write_capacity_units=1)
 
 oauth = OAuth(app)
 
@@ -164,26 +164,17 @@ def _updateUserData(user: dict, data: dict):
 def prepareUserWithData(user: dict):
     name = user["userinfo"]["email"]
     pw = user["userinfo"]["sub"]
-    query = f"\"username\" = '{name}' AND \"password\" = '{pw}'"
 
     value = {
         "user": user
     }
 
-    return value
-
-    with conn.cursor() as curs:
-        curs.execute('SELECT data FROM "UserDbs" WHERE ' + query)
-
-        try:
-            (data,) = curs.fetchone()
-            value["data"] = json.loads(data or "{}")
-        except:
-            value["data"] = { }
-            return value
+    for entry in UserModel.query(pw,
+                                 UserModel.username == name):
+        value["playlists"] = entry.playlists
+        value["tokens"] = entry.tokens.as_dict()
 
     return value
-
 
 @app.route('/assets/<path:path>')
 def asset(path: str):

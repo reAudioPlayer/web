@@ -1,5 +1,5 @@
 from pynamodb.models import Model
-from pynamodb.attributes import UnicodeAttribute
+from pynamodb.attributes import UnicodeAttribute, MapAttribute, ListAttribute
 
 class UserModel(Model):
     """
@@ -7,7 +7,8 @@ class UserModel(Model):
     """
     class Meta:
         table_name = "dynamodb-user"
-    username = UnicodeAttribute(range_key=True)
-    password = UnicodeAttribute(hash_key=True)
-    playlists = UnicodeAttribute(null=True)
-    tokens = UnicodeAttribute(null=True)
+        region = "eu-central-1"
+    password = UnicodeAttribute(range_key=True)
+    username = UnicodeAttribute(hash_key=True)
+    playlists = ListAttribute()
+    tokens = MapAttribute()

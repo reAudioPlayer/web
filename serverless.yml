@@ -12,9 +12,11 @@ plugins:
   - serverless-wsgi
   - serverless-python-requirements
 
-package:
-  packRequirements: false
-  pythonBin: python3
+custom:
+  wsgi:
+    app: app.app
+    packRequirements: false
+    pythonBin: python3
 
 functions:
   app:
@@ -23,3 +25,6 @@ functions:
       - http:
           method: any
           path: /{proxy+}
+      - http:
+          method: any
+          path: /assets/{proxy+}

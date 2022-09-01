@@ -49,12 +49,12 @@
             },
             saveSpotify()
             {
-                if (!this.userData.data)
+                if (!this.userData.tokens)
                 {
-                    this.userData.data = { }
+                    this.userData.tokens = { }
                 }
-                this.userData.data.spotifyApiId = this.spotifyClientId;
-                this.userData.data.spotifyApiSecret = this.spotifyClientSecret;
+                this.userData.tokens.spotifyApiId = this.spotifyClientId;
+                this.userData.tokens.spotifyApiSecret = this.spotifyClientSecret;
 
                 fetch("/user", {
                     method: "POST",
@@ -73,28 +73,16 @@
         },
         watch: {
             userData() {
-                this.spotifyClientId = this.userData?.data?.spotifyApiId
-                this.spotifyClientSecret = this.userData?.data?.spotifyApiSecret
+                this.spotifyClientId = this.userData?.tokens?.spotifyApiId
+                this.spotifyClientSecret = this.userData?.tokens?.spotifyApiSecret
             }
         },
         data() {
             const themes = [
                 "night-jade",
-                "night-cobalt",
-                "night-crimson",
-                "night-fire",
-                "apollo",
-                "gradient",
-                "underground",
-                "quarantine",
-                "extraction",
                 "neon",
                 "default",
-                "royal",
-                "ruby",
                 "light",
-                "light-royal",
-                "light-ruby"
             ]
             const themeSelected = window.getCurrentTheme()
             return {
